@@ -4,6 +4,8 @@
 
 This submission contains event modules and event integration edits only. It is **not** a repackaged copy of the pre-existing travel platform. No old Git history, database dumps, credentials, customer trips or demo recordings are included.
 
+**Published repository:** https://github.com/yusufridlo7/sorttrip-meta-hackathon-2026 · public/MIT · created 3 November 2026 at 16:40 UTC (23:40 WIB). Initial event-only source commit: `6684bde9732c9dde76797ac79c9a65a9cc0bf065`. A fresh clone of that public commit passed packaging tests, source scanning and hash-checked dependency reconstruction. See VERIFICATION.md for the distinction between offline tests and historical live evidence.
+
 ## What is new
 
 | Contribution | Source |
@@ -91,6 +93,6 @@ No bookings or payments are needed for review. Do not accept supplier terms or e
 
 ## Publishing
 
-Create a **new** public repository dated on/after26October2026. Publish only this directory, never `.runtime/`, the existing checkout, logs, media, environment files or old `.git` history. Run `npm run review:package` and inspect the staged file list before publishing. The current local preparation does not create a GitHub repository or grant publication approval.
+This **new** public repository was created after 26 October 2026 and published with explicit owner approval. Only this package was pushed, never `.runtime/`, the existing checkout, logs, media, environment files or old `.git` history. Run `npm run review:package` and inspect the staged file list before any future update. Publication does not authorize a deployment, database change or paid inference.
 
-MIT applies to the event work in this package, subject to the owner's publication review. Existing dependency and third-party assets retain their original licenses. No destination photos, third-party logos or personal video/audio are bundled in this package.
+MIT applies to the event work in this package with the owner's publication approval. Existing dependency and third-party assets retain their original licenses. No destination photos, third-party logos or personal video/audio are bundled in this package.

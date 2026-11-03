@@ -2,7 +2,7 @@
 
 ## Reproduced, not merely copied
 
-The package was copied to a separate clean directory outside the original application's ancestor directories, without `.runtime`, `.git`, dependencies, configuration or credentials. The documented `npm run prepare:platform` fetched the pinned dependency commit from the public GitHub repository and reconstructed all event changes using hash-checked edits. This was not a clone of the final public submission repository: that new remote has not yet been created.
+The package was copied to a separate clean directory outside the original application's ancestor directories, without `.runtime`, `.git`, dependencies, configuration or credentials. The documented `npm run prepare:platform` fetched the pinned dependency commit from the public GitHub repository and reconstructed all event changes using hash-checked edits. After owner-approved publication, initial source commit `6684bde9732c9dde76797ac79c9a65a9cc0bf065` was also cloned from the actual public submission repository: packaging tests 6 PASS, source scan PASS and dependency reconstruction PASS, with a clean Git working tree. Full 86 feature tests/build/Worker dry-run were already verified on the identical event source in the clean candidate; no paid inference or SQL was repeated for publication.
 
 | Check | Result | Scope |
 |---|---|---|
