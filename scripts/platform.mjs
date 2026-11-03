@@ -1,0 +1,18 @@
+import {spawnSync} from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');const cwd=path.join(root,'.runtime/platform');
+if(!fs.existsSync(path.join(root,'.runtime/prepared.json')))throw Error('Run npm run prepare:platform first');
+const tests=['muse-adapter','meta-wire','meta-spend','platform-context','guide-api','guide-core','guide-location','guide-view','guide-design-03','itinerary-evidence','transport-research-hints','submission-portability'];
+const action=process.argv[2];let command=process.execPath,args;
+const npm=process.env.npm_execpath;
+if(['install','build','dev','worker'].includes(action)&&!npm)throw Error('Invoke through npm run so npm CLI identity is known');
+if(action==='install')args=[npm,'ci','--ignore-scripts',...(process.argv.includes('--offline')?['--offline']:[])];
+else if(action==='build')args=[npm,'run','build'];
+else if(action==='dev')args=[npm,'run','dev'];
+else if(action==='worker')args=[path.join(cwd,'node_modules/wrangler/bin/wrangler.js'),'dev','--local','--ip','127.0.0.1','--port','8787','--config','wrangler.jsonc'];
+else if(action==='test')args=['--test',...tests.map(t=>`checks/${t}.test.mjs`)];
+else if(action==='check-worker')args=[path.join(cwd,'node_modules/wrangler/bin/wrangler.js'),'deploy','--dry-run','--config','wrangler.jsonc','--outdir','worker-build'];
+else throw Error('Unknown action');
+const result=spawnSync(command,args,{cwd,stdio:'inherit',env:process.env});process.exit(result.status??1);

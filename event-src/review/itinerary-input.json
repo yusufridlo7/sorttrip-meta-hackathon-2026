@@ -1,0 +1,11 @@
+{
+  "destination": "kl", "destinationMeta": {"city":"Kuala Lumpur","country":"Malaysia","code":"KUL"},
+  "origin": "CGK", "start": "2027-01-10", "days": 3, "people": 1, "budget": 0,
+  "journey": "return", "version": 2, "estimateIncomplete": true,
+  "flight": {"id":"synthetic-review-flight","airline":"SIMULATED INPUT — not a ticket","price":0,"depart":"07:00","arrive":"10:00","returnDepart":"20:00","returnArrive":"21:00","duration":120,"stops":0,"arrivalDay":0,"returnArrivalDay":0},
+  "items": [
+    {"id":"review-flight","title":"CGK → KUL · SIMULATED INPUT, not booked","category":"Pesawat","price":0,"priceUnknown":true,"paid":false,"day":1,"time":"07:00","note":"Synthetic starting constraints for code review, not a verified flight or AI output. No seller or price is claimed."},
+    {"id":"review-hotel","title":"Choose a hotel · sample placeholder","category":"Penginapan","price":0,"priceUnknown":true,"shared":true,"paid":false,"day":1,"time":"15:00","checkin":"2027-01-10","checkout":"2027-01-12","note":"Two-night synthetic placeholder, not a real property or quote. Ask Assistant to replace it with a sourced option; keep missing prices unavailable."},
+    {"id":"review-visit","title":"KLCC Park · sample checkpoint","place":"KLCC Park","category":"Wisata","price":0,"priceUnknown":true,"paid":false,"day":2,"time":"10:00","note":"Synthetic starting checkpoint for Guide review. No admission price, opening hour, GPS verification or booking is asserted."}
+  ]
+}

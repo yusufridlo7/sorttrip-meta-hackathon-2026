@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SortTrip · review starting input</title>
+<style>body{font:17px/1.6 system-ui,sans-serif;color:#0b2d3a;background:#f2f5f8;margin:0;padding:32px}main{max-width:760px;margin:auto;background:white;padding:32px;border-radius:20px;border:1px solid #d9e4e9}h1{line-height:1.2}button,a{color:#0b718c}button{font:inherit;border:0;border-radius:10px;background:#0b718c;color:white;padding:12px 18px;cursor:pointer}button:disabled{opacity:.5;cursor:default}input{font:inherit;padding:8px}aside{padding:14px;border-radius:10px;background:#fff5e6}#status{min-height:2em}</style></head>
+<body><main><img src="/branding/sorttrip-icon.svg" alt="SortTrip" width="44"><h1>Start with a labeled sample itinerary</h1>
+<aside><strong>Synthetic input, not an AI result.</strong> This development-only helper saves an explicitly labeled starting trip through the existing authenticated Save/RLS mechanism. It makes no Meta, supplier, booking or payment request and grants no entitlement.</aside>
+<ol><li><a href="/" target="_blank" rel="noopener">Sign in through the normal SortTrip application</a> on this same origin.</li><li>Choose a future date below and save the sample.</li><li>Return to <strong>My Trips</strong>, open the sample, attach your own authorized media and use Assistant normally. Confirm the resulting trip before activating Guide.</li></ol>
+<label>Sample start date <input id="start" type="date"></label><p><button id="save" type="button">Save labeled sample to my account</button></p><p id="status" role="status"></p><p><a href="/">Return to SortTrip</a></p>
+<script type="module">
+import {supabase} from './app/supabase';
+import {databaseTrips} from './app/database-trips';
+import template from './review/itinerary-input.json';
+const input=document.querySelector('#start'),button=document.querySelector('#save'),status=document.querySelector('#status');
+const add=(date,days)=>new Date(Date.parse(date+'T12:00:00Z')+days*86400000).toISOString().slice(0,10);
+input.value=add(new Date().toISOString().slice(0,10),30);input.min=add(new Date().toISOString().slice(0,10),1);
+let pending=false,saved=false;
+button.addEventListener('click',async()=>{
+ if(pending||saved)return;
+ if(!supabase){status.textContent='Configure your own authorized Supabase connection first. No request made.';return;}
+ if(!input.checkValidity()||!input.value){status.textContent='Choose a valid future date.';return;}
+ pending=true;button.disabled=true;status.textContent='Checking your normal authenticated session…';
+ try{
+  const {data,error}=await supabase.auth.getUser();if(error||!data.user)throw Error('Sign in through the normal application first.');
+  const trip=structuredClone(template);trip.start=input.value;
+  const hotel=trip.items.find(i=>i.id==='review-hotel');hotel.checkin=trip.start;hotel.checkout=add(trip.start,2);
+  const r=await databaseTrips(data.user.id,'/api/trips',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(trip)});
+  if(!r.ok)throw Error('Save failed. Check your connection, trips schema and own-row RLS policies; no AI was called.');
+  saved=true;status.textContent='Labeled sample saved. Return to My Trips to open it. All sample prices remain unavailable; nothing is booked.';
+ }catch(error){status.textContent=error instanceof Error?error.message:'Sample could not be saved.';}
+ finally{pending=false;button.disabled=saved;}
+});
+</script></main></body></html>
