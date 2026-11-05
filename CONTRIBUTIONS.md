@@ -32,11 +32,12 @@ This inventory describes packaged changes, not independent proof of creation dat
 | `event-src/checks/guide-design-03.test.mjs` | `41ea6fcb4e326187c283549314fcb339e1220d3bdb94a95a818814c4c6a1e037` |
 | `event-src/checks/guide-location.test.mjs` | `2d13b37d3a0b0bb190a1f76492ff9b050a713f6f8d1ed770d30aeb3e80e4da64` |
 | `event-src/checks/guide-view.test.mjs` | `a58ea84bcdf853f48f5f147ae6014cb6e17443611ebdae134e41a35e793aca81` |
-| `event-src/checks/itinerary-evidence.test.mjs` | `dce86fd9f3ffbc4cdef0d9f8c1a389ab8fe5e731ddc2a80f6ca803dc11750962` |
+| `event-src/checks/itinerary-evidence.test.mjs` | `863e62fc7b0329e2acdbf020637d8bf7c4ea435efb8047102effaf3a45dcef99` |
 | `event-src/checks/meta-spend.test.mjs` | `e240f56e524ea8891cde67062099d00609cb3b061315a8a7ae2b1a27bc5f4da2` |
 | `event-src/checks/meta-wire.test.mjs` | `f5f73b7f44acd064d93d086840088a2dcd72261115f192b2e596a7eb1a052e66` |
 | `event-src/checks/muse-adapter.test.mjs` | `c2c6b9c4feff9fc279e9021dac5fe687cd5886933f086d7f81bdf3cd8a4c04d4` |
 | `event-src/checks/platform-context.test.mjs` | `23a048a209c19777735d25b075ac9eb433c781918a50adcb742efa7fd7147d71` |
+| `event-src/checks/privacy-current.test.mjs` | `03cca0b56ccde2ea5eedc29513f71a22d8619d2c4e8c6667d3b1f4508ba19629` |
 | `event-src/checks/submission-portability.test.mjs` | `3dcbf229d0a55f465864fbf0931891971268de4ccc613d108bee0a564cd89418` |
 | `event-src/checks/transport-research-hints.test.mjs` | `ae1060c9fa0e649f1a13e146ec2e1a7aeefd4d31587bd63208b5029ed1ecd8e4` |
 | `event-src/checks/visual-palette.test.mjs` | `8b1e8864622fe00b3386f371349e518d51270669431212ecc49e6205aa0429a2` |
@@ -49,6 +50,8 @@ This inventory describes packaged changes, not independent proof of creation dat
 | `event-src/shared/guide-location.mjs` | `56740c7005b06c811b30d6d24dcc4814facddbdf2c8930b21b22ea007ac5dd3e` |
 | `event-src/shared/guide-view.d.mts` | `21603cf40cf13b1923a4e16fc38e38cda1a2d6b8be35e2529da82f1e2f1117cf` |
 | `event-src/shared/guide-view.mjs` | `8540ea723d39075e5ab0546ac6e9506c18104b00ade8fe3eb10a7b9ec1163333` |
+| `event-src/worker/activity-search-location.d.mts` | `32b204978e7fc38dd478977c574e1d7c5ec2e8b84532eb339d8f4ebcdb85851e` |
+| `event-src/worker/activity-search-location.mjs` | `610cdfba14f95b4ac0fdd95e99dd445c71f74488937e32d31303cf6b2f1e8a9a` |
 | `event-src/worker/ai-observability.js` | `b670f8290ca717c7d75ed18096f76412a8885ed1c08eb4791f8f5be34bd2e2a1` |
 | `event-src/worker/ai-provider.js` | `d33b1ef4c11954837253f716dd37dba83cd436ce2d35771d1084acaa6b7677c3` |
 | `event-src/worker/assistant-media.d.mts` | `5d16204e98bfc35ce7a4f4b4fdb6eb7ca50aa8d989dc14c3b2e0481f165341ec` |
@@ -56,26 +59,29 @@ This inventory describes packaged changes, not independent proof of creation dat
 | `event-src/worker/assistant-search-tools.js` | `1f46520ac65f7ddef70e3a706012af29d7b441e6e6243ae83ad451fd7a74c1d9` |
 | `event-src/worker/guide.js` | `9ea293149a6cf7450b16f446f144b2984dad6634ce2b7a5b9fe4eb839240d098` |
 | `event-src/worker/itinerary-evidence.d.mts` | `506ae12f87e5b0d28749efd0e39e258a543130251021b39f148525cb4c045806` |
-| `event-src/worker/itinerary-evidence.mjs` | `fb3c841fa311a2d28bcf146cf9c8efc571c63b6f5e01292f447cf5baef8b4ad4` |
+| `event-src/worker/itinerary-evidence.mjs` | `9917f4ad4f00135ff0d966bcfb792baab64694f121d21771dc730d7b0e670309` |
 | `event-src/worker/itinerary-order.d.mts` | `63a07f2749e4c6ccb00e1835176c2e461b0ec5c571107d2fd58d7304d79dfd92` |
 | `event-src/worker/meta-spend.js` | `c3a9556e2618ac7d6d1e6186839c52489a45ea9e5d5b6abdb6f47374072cbb28` |
 | `event-src/worker/meta-wire.js` | `f5dc67b80e5ef5ffcbae78c84b54399d88ed51cf687d9880313ad4efbec1249f` |
-| `event-src/worker/platform-context.js` | `2e724c9aebfa7a6578a2d75ed9afa0ab1684debf39e79671cff99d508f7624f5` |
-| `event-src/worker/route-location.mjs` | `8a3b8699bb92032c48236ab0417ca0143a83493f204c26bdbb80d9c60e497232` |
+| `event-src/worker/platform-context.js` | `1fc1e13591dd466c3288e04f274bbd0935b862929f067b99de5e14818a17aa4d` |
+| `event-src/worker/route-location.d.mts` | `058c11232ecfe8cd411e4cda6758713353cf07862265de49a1db62e2d6eba02f` |
+| `event-src/worker/route-location.mjs` | `d6eba7b112dfca770b27f50122ae730fd6727fb47346f90c6598efe05407ff93` |
 | `event-src/worker/transport-research-hints.mjs` | `e5a3075b8b93aa7ada05b596f4d363c867f88215601b311b7028b34130b0cd5e` |
 
 ## Integration edits to the external foundation
 
 | External dependency file | Operations | Added text lines | Deleted line count |
 |---|---:|---:|---:|
+| `app/activity-tickets.tsx` | 3 | 4 | 2 |
 | `app/ai-item-details.tsx` | 3 | 6 | 3 |
 | `app/ai-planner.tsx` | 12 | 17 | 8 |
-| `app/apply-ai-plan.ts` | 11 | 26 | 11 |
+| `app/apply-ai-plan.ts` | 11 | 30 | 11 |
 | `app/brand-theme.css` | 1 | 370 | 0 |
 | `app/flight-search.tsx` | 7 | 13 | 9 |
+| `app/google-route-check.tsx` | 6 | 8 | 6 |
 | `app/hotel-checkout.css` | 1 | 27 | 0 |
-| `app/i18n/locales/en.json` | 3 | 15 | 3 |
-| `app/i18n/locales/id.json` | 3 | 15 | 3 |
+| `app/i18n/locales/en.json` | 3 | 17 | 3 |
+| `app/i18n/locales/id.json` | 3 | 17 | 3 |
 | `app/item-booking.tsx` | 3 | 3 | 1 |
 | `app/price-watch.tsx` | 1 | 1 | 1 |
 | `app/route-map.tsx` | 1 | 1 | 1 |
@@ -84,16 +90,20 @@ This inventory describes packaged changes, not independent proof of creation dat
 | `app/travel-data.ts` | 3 | 3 | 3 |
 | `app/trip-save.ts` | 2 | 2 | 1 |
 | `checks/ai-itinerary.test.mjs` | 2 | 23 | 1 |
-| `checks/apply-ai-plan.test.mjs` | 5 | 52 | 0 |
-| `checks/bilingual.test.mjs` | 1 | 1 | 1 |
+| `checks/apply-ai-plan.test.mjs` | 6 | 80 | 0 |
+| `checks/bilingual.test.mjs` | 2 | 2 | 1 |
 | `checks/flight-itinerary.test.mjs` | 2 | 10 | 0 |
-| `checks/google-routes.test.mjs` | 1 | 7 | 0 |
+| `checks/google-route-ui.test.mjs` | 2 | 9 | 0 |
+| `checks/google-routes.test.mjs` | 1 | 10 | 0 |
 | `checks/itinerary-edit-completeness.test.mjs` | 2 | 3 | 1 |
-| `checks/lite-hotel.test.mjs` | 1 | 10 | 0 |
+| `checks/lite-hotel.test.mjs` | 3 | 31 | 1 |
 | `checks/price-research.test.mjs` | 1 | 1 | 1 |
+| `checks/trip-access.test.mjs` | 1 | 6 | 0 |
+| `checks/viator-api.test.mjs` | 1 | 5 | 0 |
 | `main.jsx` | 1 | 1 | 0 |
 | `package-lock.json` | 16 | 39 | 38 |
 | `package.json` | 2 | 4 | 3 |
+| `public/privacy.html` | 4 | 6 | 4 |
 | `worker/ai-draft.js` | 4 | 4 | 3 |
 | `worker/google-routes.js` | 2 | 2 | 1 |
 | `worker/index.js` | 3 | 6 | 1 |
@@ -101,6 +111,7 @@ This inventory describes packaged changes, not independent proof of creation dat
 | `worker/itinerary-intent.mjs` | 2 | 7 | 1 |
 | `worker/itinerary-order.mjs` | 1 | 1 | 1 |
 | `worker/itinerary.js` | 22 | 60 | 17 |
+| `worker/lite-hotel.js` | 5 | 50 | 5 |
 | `worker/narrative-translation.js` | 4 | 4 | 2 |
 
 ## Reconstruct and inspect

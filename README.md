@@ -1,5 +1,7 @@
 # SortTrip — Meta Hackathon Contributions
 
+**5 November maintenance candidate:** airport directions, stay/transfer consistency, activity search scope, localization and privacy fixes are documented in [GRACE_PERIOD_FIXES.md](GRACE_PERIOD_FIXES.md). Clean reconstruction, 177 offline checks, build and Worker dry-run passed. No additional live inference or deployment is claimed.
+
 **SortTrip existed before this hackathon. During the event we built the Meta Muse Spark adapter, multimodal inputs and itinerary-aware SortTrip Guide.**
 
 This submission contains event modules and event integration edits only. It is **not** a repackaged copy of the pre-existing travel platform. No old Git history, database dumps, credentials, customer trips or demo recordings are included.

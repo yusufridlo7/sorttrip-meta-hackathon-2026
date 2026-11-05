@@ -4,7 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');const cwd=path.join(root,'.runtime/platform');
 if(!fs.existsSync(path.join(root,'.runtime/prepared.json')))throw Error('Run npm run prepare:platform first');
-const tests=['muse-adapter','meta-wire','meta-spend','platform-context','guide-api','guide-core','guide-location','guide-view','guide-design-03','itinerary-evidence','transport-research-hints','submission-portability'];
+const tests=['muse-adapter','meta-wire','meta-spend','platform-context','guide-api','guide-core','guide-location','guide-view','guide-design-03','itinerary-evidence','transport-research-hints','submission-portability','google-routes','google-route-ui','lite-hotel','apply-ai-plan','viator-api','trip-access','bilingual','privacy-current'];
 const action=process.argv[2];let command=process.execPath,args;
 const npm=process.env.npm_execpath;
 if(['install','build','dev','worker'].includes(action)&&!npm)throw Error('Invoke through npm run so npm CLI identity is known');

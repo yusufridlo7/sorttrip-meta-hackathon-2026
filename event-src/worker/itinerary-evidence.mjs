@@ -6,6 +6,7 @@ export function relevantSource(item,sources=[]){
  const source=sources.find(s=>s.url===item.sourceUrl);if(!source)return false;
  let path,host;try{const u=new URL(source.url);if(u.protocol!=='https:')return false;path=decodeURIComponent(u.pathname);host=u.hostname.split('.');}catch{return false;}
  if(item.category!=='Transfer'&&/\b(?:station|stasiun)\b/i.test(source.title||'')&&!/\b(?:station|stasiun)\b/i.test([item.title,item.location,item.place].join(' ')))return false;
+ if(item.category!=='Transfer'&&/(?:\/routes?\/|\/transfers?\/)/i.test(path)&&/\b(?:airport|bandara)\b/i.test(path+' '+source.title))return false;
  const names=[item.location,item.place,item.title].filter(Boolean).flatMap(v=>[v,...v.split(/\s+\/\s+|\s+\|\s+/)]).map(v=>v.replace(/\([^)]*\)/g,'').trim()).filter(v=>norm(v)!==norm(item.city||item.locationCity));
  // Role labels added by route normalization must not hide an otherwise exact
  // station information reference. This is relevance only, never route/fare proof.

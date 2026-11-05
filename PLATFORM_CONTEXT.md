@@ -1,6 +1,6 @@
 # Shared runtime context — submission package
 
-The integrated runtime uses the single `event-src/worker/platform-context.js` contract before model egress. The submission-only version is `2026-11-03.3-submission`; the original production source remains unchanged at its existing version. Provider-specific prompt copies are not introduced.
+The integrated runtime uses the single `event-src/worker/platform-context.js` contract before model egress. The submission-only version is `2026-11-05.1-submission`; this package does not change the production deployment. Provider-specific prompt copies are not introduced. The maintenance update adds precise airport identity, conservative overnight/early-check-in handling, same-city stay continuity and the distinction between Genting admission and departure-city tours. See GRACE_PERIOD_FIXES.md.
 
 The version bump records the isolated packaging integration: an operator may explicitly bind a fresh self-hosted Supabase ledger origin with `META_LEDGER_ORIGIN`. Exact origin matching, v3 accounting, authenticated actor, entitlement, pending/blocked checks and per-request caps remain mandatory. Original production cannot be redirected and the historical QA ledger is rejected by this portability option. This changes server configuration, not model tools or the authority to book, pay, grant access or reset records.
 

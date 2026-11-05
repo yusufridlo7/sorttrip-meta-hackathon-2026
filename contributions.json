@@ -99,69 +99,6 @@
       ]
     },
     {
-      "path": "app/apply-ai-plan.ts",
-      "kind": "integration-edits",
-      "baseSHA256": "a92628f591a187dcab479cceb3c2b1d17f3a9e9fd0c7226b3769f73979fefa5e",
-      "sha256": "5fdf8dc0d92aac13c261f6aa9886f056439d2eacbbe81f33d03f2eac6e9785f7",
-      "operations": [
-        {
-          "line": 2,
-          "delete": 1,
-          "insert": "import {itineraryIntent,preserveHotels} from '../worker/itinerary-intent.mjs';\n"
-        },
-        {
-          "line": 26,
-          "delete": 1,
-          "insert": "export function reconcileHotelTransfers(trip:Trip,items:Item[],language='id',requestedAirportNight?:number):Item[]{\n"
-        },
-        {
-          "line": 40,
-          "delete": 1,
-          "insert": "  const requestedStay=requestedAirportNight?stay(requestedAirportNight):undefined;\n  const unresolvedAirport=requestedStay&&!withinAirportScope(requestedStay.geo);\n  const airportAnchor=(s:string|undefined)=>!!s&&/^(?:klia|klia area|area klia|hotel(?: dekat| near)? klia|penginapan(?: dekat)? klia)$/i.test(s.trim());\n  const airportOrigin=unresolvedAirport&&item.day===(requestedAirportNight||0)+1&&airportAnchor(item.fromPlace);\n  const airportDestination=unresolvedAirport&&item.day===requestedAirportNight&&airportAnchor(item.toPlace);\n  const fromPlace=airportOrigin?(requestedStay.place||requestedStay.title):replace(item.fromPlace,fromStay),toPlace=airportDestination?(requestedStay.place||requestedStay.title):replace(item.toPlace,current);\n"
-        },
-        {
-          "line": 45,
-          "delete": 1,
-          "insert": "  // Expanding a short hotel name in the display title does not change the\n  // structured journey. Keep its researched legs/quotes when endpoints agree.\n  if(fromPlace===item.fromPlace&&toPlace===item.toPlace&&fromPlace&&toPlace)return {...item,title:fromPlace+' → '+toPlace};\n  return {...item,title:fromPlace&&toPlace?fromPlace+' → '+toPlace:title,fromPlace,toPlace,place:undefined,geo:undefined,mode:undefined,minutes:undefined,routeOptions:undefined,selectedRoute:undefined,routePriceQuotes:undefined,priceQuote:undefined,bookingUrl:undefined,sourceUrl:undefined,routeKey:undefined,price:0,priceUnknown:true,shared:false,note:airportOrigin||airportDestination?(language==='en'?'An airport hotel has not been verified. The selected hotel is retained; check this new connection in Google Maps. Duration and fare are unavailable.':'Hotel dekat bandara belum terverifikasi. Hotel terpilih tetap dipakai; periksa sambungan baru ini di Google Maps. Durasi dan tarif belum tersedia.'):(language==='en'?'The hotel has changed. Check the route in Google Maps; transport options, duration and fare need to be checked again.':'Hotel telah berubah. Periksa rute di Google Maps; pilihan transportasi, durasi, dan tarif perlu diperiksa kembali.')};\n"
-        },
-        {
-          "line": 51,
-          "delete": 1,
-          "insert": " const preserveItemIds=trip.items.filter(x=>x.category==='Penginapan'&&preserveHotels(message,[x.title,x.title.split(/\\s+/)[0]])||intent.replaceAttractions&&intent.attractionDays.length&&x.category==='Wisata'&&!intent.attractionDays.includes(x.day)).map(x=>x.id);\n"
-        },
-        {
-          "line": 54,
-          "delete": 1,
-          "insert": " return {airport:trip.flight?.destinationCode,replaceItemIds,preserveItemIds,hotelBudget:intent.maxNightIDR?{maxNightIDR:intent.maxNightIDR,exclusive:intent.exclusive===true}:undefined,routingTargets:selected.filter(x=>['Wisata','Penginapan'].includes(x.category)).slice(0,70).map(x=>({day:x.day,city:names[x.cityId||'']||x.locationCity||city,place:x.place||x.title,category:x.category})),requestedStops:selected.filter(x=>x.category==='Wisata'&&(!x.aiGenerated||x.userEdited||x.paid||preserveItemIds.includes(x.id))).slice(0,70).map(x=>({day:x.day,city:names[x.cityId||'']||x.locationCity||city,title:x.title,protected:aiProtected(x)})),dailyCities:Array.from({length:Math.min(trip.days,70)},(_,i)=>({day:i+1,city:names[trip.cityDays?.[i]||'']||city,country:trip.cityDays?.[i]==='bkk'||trip.cityDays?.[i]==='ayutthaya'?'Thailand':trip.cityDays?.[i]==='sin'?'Singapura':trip.cityDays?.[i]==='kl'||trip.cityDays?.[i]==='melaka'||trip.cityDays?.[i]==='penang'||trip.cityDays?.[i]==='putrajaya'?'Malaysia':country})),routeRequests:trip.items.filter(x=>x.category==='Transportasi'&&(!intent.replaceAttractions||aiProtected(x)||intent.attractionDays.length&&!intent.attractionDays.includes(x.day))&&(x.fromCity&&x.toCity||x.fromPlace&&x.toPlace)&&(!intent.replaceHotels||aiProtected(x)||!mentionsHotel([x.title,x.fromPlace,x.toPlace].join(' '),hotelNames(trip)))).slice(0,70).map(x=>({day:x.day,from:names[x.fromCity||'']||x.fromPlace||x.fromCity,to:names[x.toCity||'']||x.toPlace||x.toCity,mode:x.mode||'',protected:aiProtected(x)})),retained:[...new Set([...aiRetainedItems(trip,replaceItemIds).filter(aiProtected),...trip.items.filter(x=>preserveItemIds.includes(x.id))])].filter(x=>!intent.replaceHotels||x.category!=='Transportasi'||aiProtected(x)||!mentionsHotel([x.title,x.fromPlace,x.toPlace].join(' '),hotelNames(trip))).slice(0,100).map(x=>({day:x.day,category:x.category,title:x.title,time:x.time,checkin:x.checkin,checkout:x.checkout,place:x.place,city:x.locationCity,address:x.priceQuote?.address})),locked:trip.items.filter(x=>aiProtected(x)&&x.category!=='Penginapan').map(x=>({day:x.day,time:x.time,title:x.title}))};\n"
-        },
-        {
-          "line": 61,
-          "delete": 1,
-          "insert": " const preservedHotels=new Set(trip.items.filter(x=>x.category==='Penginapan'&&(plan.context.preserveItemIds||[]).includes(x.id)).map(x=>x.id));\n const requested=[...new Set([...(plan.context.replaceItemIds||[]),...trip.items.filter(x=>x.category==='Penginapan'&&!aiProtected(x)&&!isTemplateItem(trip,x)).map(x=>x.id)])].filter(id=>!preservedHotels.has(id));\n"
-        },
-        {
-          "line": 74,
-          "delete": 1,
-          "insert": "  return {id:'ai-plan-'+a.id,...(typeof a.sourceRelevant==='boolean'?{sourceRelevant:a.sourceRelevant}:{}),aiGenerated:true,priceUnknown:true,sourceUrl:a.sourceUrl,title:a.title,place:a.location||a.title,locationCity:a.city||city,category,price:0,paid:false,day:a.day,time:a.time,...(a.geo?{geo:a.geo}:{}),...(a.admission?{admission:a.admission}:{}),...(lodging?{checkin:a.checkin||addDays(trip.start,a.day-1),checkout:a.checkout||addDays(trip.start,a.day),...(a.hotelId?{hotelId:a.hotelId}:{}),...(a.provider?{provider:a.provider}:{}),...(a.hotelArea?{hotelArea:a.hotelArea}:{}),...(a.geo?{geo:a.geo}:{}),shared:false}:{}),...(a.category==='Transfer'?{fromPlace:a.fromPlace,toPlace:a.toPlace,mode:a.mode,...(a.routeOptions?{routeOptions:a.routeOptions,selectedRoute:a.selectedRoute??0}:{})}:{}),note:a.note+(lodging?' · Rekomendasi penginapan, belum dipesan; harga dan ketersediaan belum diverifikasi.':a.sourceRelevant===false?' · Usulan AI; kecocokan sumber belum terverifikasi. Harga dan detail perlu diperiksa.':' · Usulan AI bersumber; jam/rute perlu diverifikasi. Harga belum diisi.')};\n"
-        },
-        {
-          "line": 98,
-          "delete": 1,
-          "insert": "  const protectedHotels=trip.items.filter(x=>x.category==='Penginapan'&&(!isTemplateItem(trip,x)||preservedHotels.has(x.id))&&!replacements.includes(x.id));\n"
-        },
-        {
-          "line": 113,
-          "delete": 1,
-          "insert": "   return nights.filter(day=>!lodgingDays.has(day)).map(day=>({...x,id:x.id+'-remaining-'+day,day:Math.max(day,x.day),time:day<=x.day?x.time:'',price:x.price/Math.max(1,nights.length),checkin:addDays(trip.start,day-1),checkout:addDays(trip.start,day)}));\n"
-        },
-        {
-          "line": 121,
-          "delete": 1,
-          "insert": " const merged=reconcileHotelTransfers(trip,[...existing,...additions],plan.context.language,plan.context.hotelStay?.day).map(item=>{\n  // A retained hotel time is not evidence that its arrival transfer has finished.\n  // Leave check-in unscheduled instead of inventing a journey duration.\n  if(item.category!=='Penginapan'||aiProtected(item)||!existing.includes(item)||!item.time)return item;\n  const collision=additions.some(a=>a.category==='Transportasi'&&a.day===item.day&&a.time===item.time);\n  return collision?{...item,time:'',note:item.note+(plan.context.language==='en'?' Check-in time is unconfirmed; check in after the arrival transfer.':' Jam check-in belum ditentukan; check-in setelah transfer tiba.')}:item;\n });\n"
-        }
-      ]
-    },
-    {
       "path": "app/assistant-media-client.d.mts",
       "kind": "new-event-module",
       "sha256": "593982e929ba3461eeeeade81177e5da902f06217c2b0bb14c55aa9bad237828",
@@ -263,52 +200,6 @@
           "line": 37,
           "delete": 0,
           "insert": "/* Desktop polish: retain original steps, form/sidebar order, consent,\n   cancellation terms, state transitions and payment SDK behavior. */\n@media(min-width:1000px){\n .hotel-checkout.checkout-page .checkout-heading h1{font-size:32px;line-height:1.2;letter-spacing:-.6px}\n .hotel-checkout.checkout-page .checkout-heading p{font-size:14px;line-height:1.7}\n .hotel-checkout.checkout-page .checkout-steps{border-color:var(--brand-border);box-shadow:0 3px 12px #0B2D3A08}\n .hotel-checkout.checkout-page .checkout-steps li{padding:14px;font-size:13px;line-height:1.5}\n .hotel-checkout.checkout-page .checkout-panel{border-color:var(--brand-border);border-radius:16px;box-shadow:0 8px 24px #0B2D3A0D}\n .hotel-checkout.checkout-page .checkout-section-heading{margin-bottom:20px}\n .hotel-checkout.checkout-page h2{font-size:20px;line-height:1.4;letter-spacing:-.3px}\n .hotel-checkout.checkout-page .checkout-summary h2{font-size:22px;line-height:1.35;margin-block:10px 6px}\n .hotel-checkout.checkout-page .checkout-room-name{font-size:14px;line-height:1.6}\n .hotel-checkout.checkout-page .checkout-total strong{font-size:30px;line-height:1.3;font-variant-numeric:tabular-nums}\n .hotel-checkout.checkout-page .checkout-stay b{font-variant-numeric:tabular-nums;line-height:1.5}\n .hotel-checkout.checkout-page .checkout-total small{font-size:13px;line-height:1.7}\n .hotel-checkout.checkout-page .checkout-guest-form label:not(.checkout-consent){font-size:13px;line-height:1.5}\n .hotel-checkout.checkout-page .checkout-guest-form input:not([type=checkbox]){min-height:48px;font-size:14px;line-height:1.5;border-radius:10px}\n .hotel-checkout.checkout-page fieldset{border-color:var(--brand-border);border-radius:12px}\n .hotel-checkout.checkout-page .checkout-consent{font-size:13px;line-height:1.7;border-color:var(--brand-border)}\n .hotel-checkout.checkout-page .checkout-policy>p{font-size:14px;line-height:1.7}\n .hotel-checkout.checkout-page .checkout-policy-row{line-height:1.6}\n .hotel-checkout.checkout-page .checkout-change-note{font-size:13px;line-height:1.7}\n .hotel-checkout.checkout-page .checkout-note{font-size:13px;line-height:1.7}\n .hotel-checkout.checkout-page .checkout-guest-form>.primary{min-height:48px;box-shadow:0 4px 12px #0F6E8C24}\n .hotel-checkout.checkout-page .checkout-recovery{line-height:1.7}\n .hotel-checkout.checkout-page .policy-links a{display:inline-flex;align-items:center;min-height:44px;line-height:1.5}\n}\n"
-        }
-      ]
-    },
-    {
-      "path": "app/i18n/locales/en.json",
-      "kind": "integration-edits",
-      "baseSHA256": "3a40320e222711a889c8c387acfc1b80976b6faa9e369a2307831df320ac7d52",
-      "sha256": "f4d807584c997b44dfc2f69611dfefcd48a2deef23da879cec5a1b075bbe7205",
-      "operations": [
-        {
-          "line": 1015,
-          "delete": 1,
-          "insert": "  \"day_option\": \"Day {{{day}}}\",\n"
-        },
-        {
-          "line": 1269,
-          "delete": 1,
-          "insert": "  \"rec_day\": \"Day {{{day}}}\",\n"
-        },
-        {
-          "line": 1335,
-          "delete": 1,
-          "insert": "  \"budget_partial\": \"Some costs are unavailable\",\n  \"search_any_duration\": \"Any duration\",\n  \"search_any_budget\": \"Any budget\",\n  \"search_set_budget\": \"Set a budget\",\n  \"search_budget_amount\": \"Budget limit per person (IDR)\",\n  \"explore_media_required\": \"Sign in, wait for attachments to be ready, and consent to sending media. Muse must be active to use attachments.\",\n  \"explore_media_handoff\": \"Attachments will move to the editor after you select a trip. Click Generate itinerary with AI to analyse them; flight search does not read media.\",\n  \"search_duration_coverage\": \"Flexible duration coverage\",\n  \"ai_source_unverified\": \"The attraction source has not been verified as relevant. Check an official source; this link is not evidence of an admission fee.\",\n  \"ai_evidence_review\": \"Review needed: {{routes}} connections, {{sources}} attraction sources, {{legs}} transport sources\",\n  \"ai_connection_gap\": \"Day {{day}}: the connection from {{from}} to {{to}} is not fully recorded. Schedule and fare are unverified.\",\n  \"admission_info_source\": \"Attraction information; check admission fees separately\",\n  \"route_source_unverified\": \"The source for this leg is unverified; check the operator and route.\"\n"
-        }
-      ]
-    },
-    {
-      "path": "app/i18n/locales/id.json",
-      "kind": "integration-edits",
-      "baseSHA256": "6902ad7e9ed655872485a7d9cd9d88d4c63c22ca8806f303e2ac66ed14503707",
-      "sha256": "b98f2345d98cea7320f5d9e38e71caa373875577ebd99f87679d574bea0473fb",
-      "operations": [
-        {
-          "line": 1015,
-          "delete": 1,
-          "insert": "  \"day_option\": \"Hari {{{day}}}\",\n"
-        },
-        {
-          "line": 1269,
-          "delete": 1,
-          "insert": "  \"rec_day\": \"Hari {{{day}}}\",\n"
-        },
-        {
-          "line": 1335,
-          "delete": 1,
-          "insert": "  \"budget_partial\": \"Sebagian biaya belum tersedia\",\n  \"search_any_duration\": \"Berapa hari pun\",\n  \"search_any_budget\": \"Berapa pun\",\n  \"search_set_budget\": \"Tentukan budget\",\n  \"search_budget_amount\": \"Batas budget per orang (Rp)\",\n  \"explore_media_required\": \"Login, tunggu lampiran siap, lalu setujui pengiriman media. Muse harus aktif untuk memakai lampiran.\",\n  \"explore_media_handoff\": \"Lampiran akan diteruskan ke editor setelah Anda memilih perjalanan. Klik Susun itinerary dengan AI untuk menganalisisnya; pencarian tiket tidak membaca media.\",\n  \"search_duration_coverage\": \"Cakupan durasi bebas\",\n  \"ai_source_unverified\": \"Kecocokan sumber wisata belum terverifikasi. Periksa sumber resmi; tautan ini tidak digunakan sebagai bukti tarif.\",\n  \"ai_evidence_review\": \"Perlu diperiksa: {{routes}} sambungan, {{sources}} sumber wisata, {{legs}} sumber transportasi\",\n  \"ai_connection_gap\": \"Hari {{day}}: sambungan {{from}} → {{to}} belum tercatat lengkap. Jadwal dan tarif belum terverifikasi.\",\n  \"admission_info_source\": \"Informasi wisata; tarif masih perlu diperiksa\",\n  \"route_source_unverified\": \"Sumber untuk kaki perjalanan ini belum terverifikasi; periksa operator dan rute.\"\n"
         }
       ]
     },
@@ -570,52 +461,6 @@
       ]
     },
     {
-      "path": "checks/apply-ai-plan.test.mjs",
-      "kind": "integration-edits",
-      "baseSHA256": "1aa052938e2e00545d92877ee8e1395140bd2ab0cfcaeb363b6dd17f14a81a18",
-      "sha256": "458dbfbb23defc72f5c4042f6787f3995083c9c340d36d8290c505e7852a782a",
-      "operations": [
-        {
-          "line": 11,
-          "delete": 0,
-          "insert": "test('explicit keep-hotel instruction retains the full template stay and midnight check-in even against a supplier replacement',()=>{\n const ctx={city:'Kuala Lumpur',start:'2026-11-07',days:4,people:1,budget:4500000};\n const stay={id:'hotel',category:'Penginapan',template:true,day:2,time:'01:55',title:'Travelodge',place:'Travelodge',price:1620000,paid:false,checkin:'2026-11-07',checkout:'2026-11-10',note:'anggaran contoh'};\n const input={...ctx,destination:'kl',destinationMeta:{city:ctx.city},flight:{arrive:'23:55',arrivalDay:0},items:[stay]};\n const preserved=aiTripContext(input,ctx.city,'Malaysia','Pertahankan penerbangan, tanggal dan hotel. Hari ketiga museum.');\n assert.deepEqual(preserved.preserveItemIds,['hotel']);assert.equal(preserved.retained[0].title,'Travelodge');\n assert.deepEqual(aiTripContext(input,ctx.city,'Malaysia','Pertahankan penerbangan dan Travelodge beserta 3 malamnya.').preserveItemIds,['hotel']);\n const area={id:'area',day:2,time:'16:00',category:'Area menginap',title:'Pasar Seni',sourceUrl,note:'Area'};\n const base={context:{...ctx,...preserved},sources:[{url:sourceUrl}],activities:[area]};\n for(const proposed of [base,{...base,context:{...base.context,replaceItemIds:['hotel']},activities:[{...area,category:'Penginapan',hotelId:'new',provider:'LiteAPI',checkin:'2026-11-07',checkout:'2026-11-10'}]}]){\n  const result=applyAIPlan(input,proposed,[hotelQuote(proposed.activities[0])]);\n  assert.deepEqual(result.items,[stay]);\n }\n});\ntest('splitting an unprotected template stay never moves its midnight arrival check-in to the departure day',()=>{\n const ctx={city:'Kuala Lumpur',start:'2026-11-07',days:4,people:1,budget:4500000};\n const stay={id:'hotel',category:'Penginapan',template:true,day:2,time:'01:55',title:'Travelodge',price:1620000,paid:false,checkin:'2026-11-07',checkout:'2026-11-10',note:'anggaran contoh'};\n const result=applyAIPlan({...ctx,destination:'kl',destinationMeta:{city:ctx.city},items:[stay]}, {context:ctx,sources:[{url:sourceUrl}],activities:[{id:'area',day:2,time:'16:00',category:'Area menginap',title:'Pasar Seni',sourceUrl,note:'Area'}]});\n const remaining=result.items.find(x=>x.id==='hotel-remaining-1');\n assert.equal(remaining.day,2);assert.equal(remaining.time,'01:55');assert.equal(remaining.checkin,'2026-11-07');\n});\n"
-        },
-        {
-          "line": 14,
-          "delete": 0,
-          "insert": "test('unverified airport move keeps selected hotel and invalidates speculative airport-hotel connections without touching paid routes',()=>{\n const stay={...hotel,paid:false,title:'Selected city hotel',checkin:context.start,checkout:'2026-12-12'};\n const route={id:'r',category:'Transportasi',title:'Hotel KLIA ke terminal',fromPlace:'KLIA',toPlace:'Terminal KLIA',day:3,time:'10:00',price:100000,paid:false,note:'shuttle',routeOptions:[{legs:[{fromPlace:'KLIA',toPlace:'Terminal KLIA'}]}],bookingUrl:'https://example.com/old'};\n const result=reconcileHotelTransfers({...context,items:[stay]},[stay,route,{...route,id:'paid',paid:true},{...route,id:'arrival',day:2,fromPlace:'Putrajaya',toPlace:'KLIA'}],'id',2);\n assert.equal(result[1].fromPlace,stay.title);assert.equal(result[1].routeOptions,undefined);assert.equal(result[1].bookingUrl,undefined);assert.equal(result[1].priceUnknown,true);assert.match(result[1].note,/belum terverifikasi/);\n assert.equal(result[2].fromPlace,'KLIA');assert.equal(result[3].toPlace,stay.title);\n});\n"
-        },
-        {
-          "line": 31,
-          "delete": 0,
-          "insert": "});\ntest('expanding a short hotel display title preserves researched legs when structured endpoints did not change',()=>{\n const stay={...hotel,paid:false,title:'Travelodge Kuala Lumpur City Centre',place:'Travelodge Kuala Lumpur City Centre',checkin:context.start,checkout:'2026-12-12'};\n const route={id:'arrival',category:'Transportasi',day:1,time:'18:00',title:'KUL → Travelodge',fromPlace:'KUL',toPlace:stay.place,price:100,paid:false,note:'Researched route',priceQuote:{amountIDR:100},routeOptions:[{kind:'hemat',legs:[{fromPlace:'KUL',toPlace:stay.place,mode:'Bus'}]}]};\n const next=reconcileHotelTransfers({...trip,items:[stay]},[stay,route]).at(-1);\n assert.equal(next.title,'KUL → '+stay.place);assert.equal(next.routeOptions,route.routeOptions);assert.equal(next.priceQuote,route.priceQuote);assert.equal(next.note,route.note);assert.equal(next.price,100);\n"
-        },
-        {
-          "line": 82,
-          "delete": 0,
-          "insert": "});\ntest('attraction replacement does not force obsolete unprotected route requests into new research',()=>{\n const old={id:'old-route',category:'Transportasi',day:2,fromPlace:'Old museum',toPlace:'Old park',paid:false,time:'10:00',title:'Old route',note:'',price:0};\n const t={...trip,items:[...trip.items,old,{...old,id:'booked',paid:true},{...old,id:'later',day:3}]};\n const result=aiTripContext(t,context.city,'Malaysia','Hari kedua ganti wisata menjadi museum');\n assert.equal(result.routeRequests.length,2);assert.ok(result.routeRequests.some(x=>x.protected));assert.ok(result.routeRequests.some(x=>x.day===3));\n assert.ok(!result.routeRequests.some(x=>x.day===2&&!x.protected));\n"
-        },
-        {
-          "line": 218,
-          "delete": 0,
-          "insert": "\ntest('fallback hotel has no invented check-in time when arrival transfer starts at that time',()=>{\n const old={...hotel,paid:false,userEdited:true,time:'19:20',note:'Original hotel',checkin:context.start,checkout:'2026-12-12'};\n const transfer={id:'arrival',day:1,time:'19:20',category:'Transfer',title:'Airport to hotel',fromPlace:'Airport',toPlace:'Hotel',mode:'Bus',sourceUrl,note:'Arrival transfer'};\n const draft={...plan,context:{...context,replaceItemIds:[old.id]},activities:[transfer]};\n const result=applyAIPlan({...trip,items:[flight,old]},draft);\n assert.equal(result.items.find(x=>x.id===old.id).time,'');\n assert.match(result.items.find(x=>x.id===old.id).note,/Jam check-in/);\n const locked={...old,aiLocked:true};\n assert.equal(applyAIPlan({...trip,items:[flight,locked]},draft).items.find(x=>x.id===locked.id).time,'19:20');\n});\n"
-        }
-      ]
-    },
-    {
-      "path": "checks/bilingual.test.mjs",
-      "kind": "integration-edits",
-      "baseSHA256": "0bbe7a29ecdd4c541dc79f3061c36a59de6f679ffb2cd395b8b77650794a8331",
-      "sha256": "a67e838c08ef95fc8952601a51d4b74cb537e65042dca9282cd40a78db54529d",
-      "operations": [
-        {
-          "line": 55,
-          "delete": 1,
-          "insert": " try{globalThis.fetch=async(url,options)=>{calls.push(String(url));if(String(url).endsWith('/auth/v1/user'))return Response.json({id:'fixture'});const body=JSON.parse(options.body);assert.match(body.instructions,/\\[SORTTRIP_PLATFORM_CONTEXT [^\\n]+purpose=translation\\]/);assert.equal(body.store,false);assert.equal(body.tools,undefined);assert.match(body.instructions,/English/);return Response.json({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify({entries:[{id:'n0',text:'Walk for 10 minutes.'}]})}]}]});};\n"
-        }
-      ]
-    },
-    {
       "path": "checks/flight-itinerary.test.mjs",
       "kind": "integration-edits",
       "baseSHA256": "a2acb2675a59af645f4c52ac654ef3a5160ddcad08057d688145893a931cd8b1",
@@ -630,19 +475,6 @@
           "line": 33,
           "delete": 0,
           "insert": "test('any-duration and unspecified budget retain supplier trip length and real fare through serialization',()=>{\n const query=travel.resolveSearchDates({...q,durationMode:'free',minDays:1,maxDays:365,budget:0,outFrom:'',outTo:'',backFrom:'',backTo:''},'2026-11-02');\n assert.equal(query.minDays,1);assert.equal(query.maxDays,365);assert.equal(query.anytime,true);\n const trip=JSON.parse(JSON.stringify(api.apiTrip(f,query)));\n assert.equal(trip.days,4);assert.equal(trip.budget,0);assert.equal(trip.flight.price,1234567);\n assert.ok(travel.costs(trip).perPerson>0);assert.equal(trip.flight.bookingUrl,f.bookingUrl);\n});\n"
-        }
-      ]
-    },
-    {
-      "path": "checks/google-routes.test.mjs",
-      "kind": "integration-edits",
-      "baseSHA256": "e4a408dd59aab666fb5ad2c590754c33c62a3c8f5bcb9470c22cfd7a012aa473",
-      "sha256": "7ddd8d6823d0538c74c0ee04dc19f3c7f81ea87c701583fd3a5afc060536f005",
-      "operations": [
-        {
-          "line": 7,
-          "delete": 0,
-          "insert": "test('known airport IATA codes use existing catalogue names; terminals are never guessed',()=>{\n const result=validateGoogleRoute({from:'KUL',to:'Travelodge Kuala Lumpur City Centre',mode:'DRIVE'});\n assert.equal(result.origin.address,'Kuala Lumpur International Airport, Kuala Lumpur, MY');\n assert.doesNotMatch(result.origin.address,/Terminal|T1|T2/);\n assert.equal(validateGoogleRoute({from:'ZZZ',to:'City hotel',mode:'DRIVE'}).origin.address,'ZZZ');\n assert.equal(validateGoogleRoute({from:'Pasar Seni',to:'City hotel',mode:'WALK'}).origin.address,'Pasar Seni');\n});\n"
         }
       ]
     },
@@ -691,25 +523,6 @@
           "line": 25,
           "delete": 0,
           "insert": " const wrong='https://hotel.example/home';\n assert.deepEqual(attractionReferences({...activity,admission:{...activity.admission,sourceUrl:wrong},coordinates:{...activity.coordinates,sourceUrl:wrong}},[{url:wrong,title:'City hotel'}],quote),{});\n"
-        }
-      ]
-    },
-    {
-      "path": "checks/itinerary-evidence.test.mjs",
-      "kind": "new-event-module",
-      "sha256": "dce86fd9f3ffbc4cdef0d9f8c1a389ab8fe5e731ddc2a80f6ca803dc11750962",
-      "bytes": 8906
-    },
-    {
-      "path": "checks/lite-hotel.test.mjs",
-      "kind": "integration-edits",
-      "baseSHA256": "315d213d46d1fa728d923613ee8cc93062b3178461807e56c0f7c9be96e4a4a2",
-      "sha256": "bf2507550a91c10a66ad6fff9136ef38e5828cf09677a6f99ac5832e6d96a90c",
-      "operations": [
-        {
-          "line": 104,
-          "delete": 0,
-          "insert": "\ntest('budget inventory is fetched before model latency; protected/split scopes are not guessed',async()=>{\n const {prefetchBudgetHotels}=await import('../worker/itinerary.js');let calls=0;\n const query={...q,hotelBudget:{maxNightIDR:500000,exclusive:true}};\n const fetcher=async(url,opts)=>{calls++;const b=JSON.parse(opts.body);assert.equal(b.checkin,q.start);assert.equal(b.checkout,'2027-01-13');return Response.json({data:[{hotelId:hotel.id,roomTypes:[rate(300000)]}],hotels:[hotel]});};\n const prefetched=await prefetchBudgetHotels(query,env,fetcher);\n assert.equal(calls,2);assert.equal(prefetched.length,1);assert.equal(prefetched[0].amountIDR,300020);assert.equal(prefetched[0].adults,2);\n assert.deepEqual(await prefetchBudgetHotels({...query,hotelStay:{day:3}},env,()=>assert.fail('airport scope must wait')),[]);\n assert.deepEqual(await prefetchBudgetHotels({...query,dailyCities:[{day:2,city:'Melaka'}]},env,()=>assert.fail('multi-city scope must wait')),[]);\n});\n"
         }
       ]
     },
@@ -923,12 +736,6 @@
       "bytes": 609
     },
     {
-      "path": "worker/itinerary-evidence.mjs",
-      "kind": "new-event-module",
-      "sha256": "fb3c841fa311a2d28bcf146cf9c8efc571c63b6f5e01292f447cf5baef8b4ad4",
-      "bytes": 8212
-    },
-    {
       "path": "worker/itinerary-intent.d.mts",
       "kind": "integration-edits",
       "baseSHA256": "f3cfa833543203a470ad50982ce9d427ba083258ae2c035f18addd4caa82bc54",
@@ -1131,12 +938,6 @@
       ]
     },
     {
-      "path": "worker/route-location.mjs",
-      "kind": "new-event-module",
-      "sha256": "8a3b8699bb92032c48236ab0417ca0143a83493f204c26bdbb80d9c60e497232",
-      "bytes": 479
-    },
-    {
       "path": "worker/transport-research-hints.mjs",
       "kind": "new-event-module",
       "sha256": "e5a3075b8b93aa7ada05b596f4d363c867f88215601b311b7028b34130b0cd5e",
@@ -1267,8 +1068,8 @@
     {
       "path": "worker/platform-context.js",
       "kind": "new-event-module",
-      "sha256": "2e724c9aebfa7a6578a2d75ed9afa0ab1684debf39e79671cff99d508f7624f5",
-      "bytes": 9278,
+      "sha256": "1fc1e13591dd466c3288e04f274bbd0935b862929f067b99de5e14818a17aa4d",
+      "bytes": 9747,
       "purpose": "Event module with isolated submission-only origin portability or its tests; original production source unchanged"
     },
     {
@@ -1291,6 +1092,415 @@
       "sha256": "482e6e60e5f675837c14a2ccefadffe519e42828723f8b8dcc2d6cb21c983f8a",
       "bytes": 1486,
       "purpose": "Event module with isolated submission-only origin portability or its tests; original production source unchanged"
+    },
+    {
+      "path": "worker/route-location.mjs",
+      "kind": "new-event-module",
+      "sha256": "d6eba7b112dfca770b27f50122ae730fd6727fb47346f90c6598efe05407ff93",
+      "bytes": 872
+    },
+    {
+      "path": "worker/route-location.d.mts",
+      "kind": "new-event-module",
+      "sha256": "058c11232ecfe8cd411e4cda6758713353cf07862265de49a1db62e2d6eba02f",
+      "bytes": 113
+    },
+    {
+      "path": "worker/lite-hotel.js",
+      "kind": "integration-edits",
+      "baseSHA256": "b1106ad94d8ca24c2d875ac3aa02f07a32829f7c11bf548c598cfe657397564f",
+      "sha256": "49f845afd5fdf0298100651359f13296c966dce5c69e23d12de8393f43d99adf",
+      "operations": [
+        {
+          "line": 12,
+          "delete": 0,
+          "insert": "// A supplier hotel replaces a researched area, not the evidence for its route.\n// Rebind exact area endpoints only and invalidate old fare/duration claims.\nfunction rebindStayTransfers(activities,aliases){\n const replace=(value,item)=>{\n  const explicit=/\\b(?:stay|hotel|accommodation|penginapan)\\b/i.test(item.title||'');\n  // A neighbourhood may also be a sightseeing stop. Do not turn that visit\n  // into a hotel merely because the lodging research used the same name.\n  if(!explicit&&activities.some(v=>v.day===item.day&&v.category==='Wisata'&&[v.title,v.location].some(n=>clean(n)===clean(value))))return value;\n  const exact=aliases.find(a=>a.days.includes(item.day)&&clean(value)===clean(a.from));\n  if(exact)return exact.to;\n  if(explicit&&/^(?:stay|city stay|hotel|accommodation|penginapan)$/i.test(value||'')){\n   const choices=[...new Set(aliases.filter(a=>a.days.includes(item.day)).map(a=>a.to))];\n   if(choices.length===1)return choices[0];\n  }\n  return value;\n };\n return activities.map(a=>{\n  if(a.category!=='Transfer')return a;\n  const fromPlace=replace(a.fromPlace,a),toPlace=replace(a.toPlace,a);\n  if(fromPlace===a.fromPlace&&toPlace===a.toPlace)return a;\n  return {...a,fromPlace,toPlace,title:fromPlace+' → '+toPlace,sourceRelevant:false,routeOptions:a.routeOptions?.map(o=>({...o,legs:o.legs.map(l=>{\n   const from=replace(l.fromPlace,a),to=replace(l.toPlace,a);\n   if(from===l.fromPlace&&to===l.toPlace)return l;\n   const {fare,duration,checkedAt,...rest}=l;\n   return {...rest,fromPlace:from,toPlace:to,sourceRelevant:false};\n  })})),note:(a.note||'')+' · Hotel/area endpoint updated; verify route and travel time. Fare unavailable.'};\n });\n}\n"
+        },
+        {
+          "line": 34,
+          "delete": 0,
+          "insert": " // Avoid a new hotel every night merely because research used different\n // neighbourhood names. Explicit hotel moves, different cities and KLIA\n // requests remain separate; paid/retained nights are never covered.\n const separate=/\\b(?:pindah\\s+(?:hotel|penginapan)|hotel\\s+berbeda|ganti\\s+hotel\\s+(?:tiap|setiap)|different\\s+hotels|change\\s+hotels|switch\\s+hotels)\\b/i.test(q.interests||'');\n"
+        },
+        {
+          "line": 35,
+          "delete": 3,
+          "insert": "  const previous=groups.at(-1),key=clean(a.city||q.city)+'|'+(separate||a.airportScope?clean(a.location||a.title):'city-stay');\n  if(previous&&previous.key===key&&previous.lastDay+1===a.day){previous.lastDay=a.day;previous.ids.push(a.id);previous.areas.push(a.location||a.title);previous.activity.checkout=at(a.day+1);}\n  else {\n   // A post-midnight arrival check-in needs the preceding hotel night. Do not\n   // reinterpret arbitrary early check-ins or overlap a selected retained stay.\n   const overnight=a.day===(q.arrivalDay||0)+2&&/^\\d{2}:\\d{2}$/.test(q.arrival||'')&&q.arrival>='18:00'&&a.time<'06:00'&&!retainedNight({day:a.day-1});\n   groups.push({key,lastDay:a.day,ids:[a.id],areas:[a.location||a.title],activity:{...a,checkin:at(overnight?a.day-1:a.day),checkout:at(a.day+1)}});\n  }\n"
+        },
+        {
+          "line": 40,
+          "delete": 1,
+          "insert": " const aliases=groups.flatMap(g=>g.areas.map(from=>({from,to:g.activity.location||g.activity.title,days:Array.from({length:g.lastDay-g.activity.day+1},(_,i)=>g.activity.day+i)})));\n return {...plan,...(airport&&scoped.some(a=>a.airportScope)?{sources:[...(plan.sources||[]).filter(s=>s.url!==airportSource),{url:airportSource,title:'KLIA / Sepang location reference'}]}:{}),activities:rebindStayTransfers(scoped.filter(a=>!removed.has(a.id)).map(a=>grouped.get(a.id)||a),aliases)};\n"
+        },
+        {
+          "line": 132,
+          "delete": 1,
+          "insert": " const aliases=plan.activities.flatMap(a=>{\n  const quote=quotes.get('ai-plan-'+a.id);if(!quote||a.category!=='Area menginap')return [];\n  const nights=Math.round((Date.parse(quote.checkout)-Date.parse(quote.checkin))/86400000);\n  const first=a.day-Math.max(0,Math.round((Date.parse(quote.checkin)-Date.parse(a.checkin||quote.checkin))/86400000));\n  const days=Array.from({length:nights+1},(_,i)=>first+i);\n  return [a.location,a.title].filter(Boolean).map(from=>({from,to:quote.hotelName,days}));\n });\n return {...plan,activities:rebindStayTransfers(activities,aliases),sources:prices.some(p=>p.provider==='LiteAPI')?[...plan.sources.filter(s=>s.url!==LITE_HOTEL_SOURCE),{url:LITE_HOTEL_SOURCE,title:'LiteAPI hotel rate data'}]:plan.sources};\n"
+        }
+      ]
+    },
+    {
+      "path": "worker/itinerary-evidence.mjs",
+      "kind": "new-event-module",
+      "sha256": "9917f4ad4f00135ff0d966bcfb792baab64694f121d21771dc730d7b0e670309",
+      "bytes": 8359
+    },
+    {
+      "path": "worker/activity-search-location.mjs",
+      "kind": "new-event-module",
+      "sha256": "610cdfba14f95b4ac0fdd95e99dd445c71f74488937e32d31303cf6b2f1e8a9a",
+      "bytes": 289
+    },
+    {
+      "path": "worker/activity-search-location.d.mts",
+      "kind": "new-event-module",
+      "sha256": "32b204978e7fc38dd478977c574e1d7c5ec2e8b84532eb339d8f4ebcdb85851e",
+      "bytes": 56
+    },
+    {
+      "path": "app/google-route-check.tsx",
+      "kind": "integration-edits",
+      "baseSHA256": "137dc805d2a5634039c0f2185467f6cce57c67c6aaa9e5db61e364a144bca93c",
+      "sha256": "6a60a294d2f22a5d426f9eafef390a607d9e68466b35e629d02124a6184b71f6",
+      "operations": [
+        {
+          "line": 3,
+          "delete": 0,
+          "insert": "import {routeAddress} from '../worker/route-location.mjs';\n"
+        },
+        {
+          "line": 5,
+          "delete": 1,
+          "insert": " const [open,setOpen]=useState(false),[mode,setMode]=useState('TRANSIT'),[at,setAt]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[result,setResult]=useState<Result|null>(null);\n"
+        },
+        {
+          "line": 7,
+          "delete": 1,
+          "insert": " useEffect(()=>{abort.current?.abort();setResult(null);setError('');setAt('');return()=>abort.current?.abort();},[from,to,date]);\n"
+        },
+        {
+          "line": 9,
+          "delete": 2,
+          "insert": " const origin=routeAddress(from),destination=routeAddress(to);\n const mapsUrl='https://www.google.com/maps/dir/?'+new URLSearchParams({api:'1',origin,destination,travelmode:mode==='TRANSIT'?'transit':mode==='WALK'?'walking':'driving'}).toString();\n async function check(){if(busy||mode==='TRANSIT'&&!at)return;setBusy(true);setError('');setResult(null);abort.current=new AbortController();\n"
+        },
+        {
+          "line": 13,
+          "delete": 1,
+          "insert": "   const response=await fetch('/api/routes/google',{method:'POST',signal:AbortSignal.any([abort.current.signal,AbortSignal.timeout(45000)]),headers:{'Content-Type':'application/json','X-SortTrip-Language':language(),Authorization:'Bearer '+data.session.access_token},body:JSON.stringify({from:origin,to:destination,mode,departureTime,language:language()})});\n"
+        },
+        {
+          "line": 17,
+          "delete": 1,
+          "insert": " return <details className=\"google-route-check\" open={open} onToggle={e=>setOpen(e.currentTarget.open)}><summary>{tr('google_route_action')}<small>{origin} → {destination}</small></summary><p>{origin} → {destination}</p><p className=\"inline-note\">{tr('google_route_consent')}</p><div className=\"form-two\"><label>{tr('google_route_mode')}<select disabled={busy} value={mode} onChange={e=>{setMode(e.target.value);setResult(null)}}><option value=\"TRANSIT\">{tr('google_route_transit')}</option><option value=\"WALK\">{tr('google_route_walk')}</option><option value=\"DRIVE\">{tr('google_route_drive')}</option></select></label>{mode==='TRANSIT'&&<label>{tr('google_route_departure')}<input type=\"datetime-local\" disabled={busy} value={at} onChange={e=>{setAt(e.target.value);setResult(null)}}/><small>{Intl.DateTimeFormat().resolvedOptions().timeZone} · {tr('google_route_choose_time')}</small></label>}</div><button type=\"button\" className=\"secondary\" disabled={busy||mode==='TRANSIT'&&!at} onClick={()=>void check()}>{tr(busy?'google_route_working':'google_route_check')}</button>{error&&<p role=\"alert\">{tr(error)===error?localize(error):tr(error)}</p>}\n"
+        }
+      ]
+    },
+    {
+      "path": "app/apply-ai-plan.ts",
+      "kind": "integration-edits",
+      "baseSHA256": "a92628f591a187dcab479cceb3c2b1d17f3a9e9fd0c7226b3769f73979fefa5e",
+      "sha256": "ecb4de5c3c3cb0001e2dbfe886e2deed1292c19aceb963aaa200544ba9b70845",
+      "operations": [
+        {
+          "line": 2,
+          "delete": 1,
+          "insert": "import {itineraryIntent,preserveHotels} from '../worker/itinerary-intent.mjs';\n"
+        },
+        {
+          "line": 26,
+          "delete": 1,
+          "insert": "export function reconcileHotelTransfers(trip:Trip,items:Item[],language='id',requestedAirportNight?:number):Item[]{\n"
+        },
+        {
+          "line": 40,
+          "delete": 1,
+          "insert": "  const requestedStay=requestedAirportNight?stay(requestedAirportNight):undefined;\n  const unresolvedAirport=requestedStay&&!withinAirportScope(requestedStay.geo);\n  const airportAnchor=(s:string|undefined)=>!!s&&/^(?:klia|klia area|area klia|hotel(?: dekat| near)? klia|penginapan(?: dekat)? klia)$/i.test(s.trim());\n  const airportOrigin=unresolvedAirport&&item.day===(requestedAirportNight||0)+1&&airportAnchor(item.fromPlace);\n  const airportDestination=unresolvedAirport&&item.day===requestedAirportNight&&airportAnchor(item.toPlace);\n  const fromPlace=airportOrigin?(requestedStay.place||requestedStay.title):replace(item.fromPlace,fromStay),toPlace=airportDestination?(requestedStay.place||requestedStay.title):replace(item.toPlace,current);\n"
+        },
+        {
+          "line": 45,
+          "delete": 1,
+          "insert": "  // Expanding a short hotel name in the display title does not change the\n  // structured journey. Keep its researched legs/quotes when endpoints agree.\n  if(fromPlace===item.fromPlace&&toPlace===item.toPlace&&fromPlace&&toPlace)return {...item,title:fromPlace+' → '+toPlace};\n  return {...item,title:fromPlace&&toPlace?fromPlace+' → '+toPlace:title,fromPlace,toPlace,place:undefined,geo:undefined,mode:undefined,minutes:undefined,routeOptions:undefined,selectedRoute:undefined,routePriceQuotes:undefined,priceQuote:undefined,bookingUrl:undefined,sourceUrl:undefined,routeKey:undefined,price:0,priceUnknown:true,shared:false,note:airportOrigin||airportDestination?(language==='en'?'An airport hotel has not been verified. The selected hotel is retained; check this new connection in Google Maps. Duration and fare are unavailable.':'Hotel dekat bandara belum terverifikasi. Hotel terpilih tetap dipakai; periksa sambungan baru ini di Google Maps. Durasi dan tarif belum tersedia.'):(language==='en'?'The hotel has changed. Check the route in Google Maps; transport options, duration and fare need to be checked again.':'Hotel telah berubah. Periksa rute di Google Maps; pilihan transportasi, durasi, dan tarif perlu diperiksa kembali.')};\n"
+        },
+        {
+          "line": 51,
+          "delete": 1,
+          "insert": " const preserveItemIds=trip.items.filter(x=>x.category==='Penginapan'&&preserveHotels(message,[x.title,x.title.split(/\\s+/)[0]])||intent.replaceAttractions&&intent.attractionDays.length&&x.category==='Wisata'&&!intent.attractionDays.includes(x.day)).map(x=>x.id);\n"
+        },
+        {
+          "line": 54,
+          "delete": 1,
+          "insert": " return {airport:trip.flight?.destinationCode,replaceItemIds,preserveItemIds,hotelBudget:intent.maxNightIDR?{maxNightIDR:intent.maxNightIDR,exclusive:intent.exclusive===true}:undefined,routingTargets:selected.filter(x=>['Wisata','Penginapan'].includes(x.category)).slice(0,70).map(x=>({day:x.day,city:names[x.cityId||'']||x.locationCity||city,place:x.place||x.title,category:x.category})),requestedStops:selected.filter(x=>x.category==='Wisata'&&(!x.aiGenerated||x.userEdited||x.paid||preserveItemIds.includes(x.id))).slice(0,70).map(x=>({day:x.day,city:names[x.cityId||'']||x.locationCity||city,title:x.title,protected:aiProtected(x)})),dailyCities:Array.from({length:Math.min(trip.days,70)},(_,i)=>({day:i+1,city:names[trip.cityDays?.[i]||'']||city,country:trip.cityDays?.[i]==='bkk'||trip.cityDays?.[i]==='ayutthaya'?'Thailand':trip.cityDays?.[i]==='sin'?'Singapura':trip.cityDays?.[i]==='kl'||trip.cityDays?.[i]==='melaka'||trip.cityDays?.[i]==='penang'||trip.cityDays?.[i]==='putrajaya'?'Malaysia':country})),routeRequests:trip.items.filter(x=>x.category==='Transportasi'&&(!intent.replaceAttractions||aiProtected(x)||intent.attractionDays.length&&!intent.attractionDays.includes(x.day))&&(x.fromCity&&x.toCity||x.fromPlace&&x.toPlace)&&(!intent.replaceHotels||aiProtected(x)||!mentionsHotel([x.title,x.fromPlace,x.toPlace].join(' '),hotelNames(trip)))).slice(0,70).map(x=>({day:x.day,from:names[x.fromCity||'']||x.fromPlace||x.fromCity,to:names[x.toCity||'']||x.toPlace||x.toCity,mode:x.mode||'',protected:aiProtected(x)})),retained:[...new Set([...aiRetainedItems(trip,replaceItemIds).filter(aiProtected),...trip.items.filter(x=>preserveItemIds.includes(x.id))])].filter(x=>!intent.replaceHotels||x.category!=='Transportasi'||aiProtected(x)||!mentionsHotel([x.title,x.fromPlace,x.toPlace].join(' '),hotelNames(trip))).slice(0,100).map(x=>({day:x.day,category:x.category,title:x.title,time:x.time,checkin:x.checkin,checkout:x.checkout,place:x.place,city:x.locationCity,address:x.priceQuote?.address})),locked:trip.items.filter(x=>aiProtected(x)&&x.category!=='Penginapan').map(x=>({day:x.day,time:x.time,title:x.title}))};\n"
+        },
+        {
+          "line": 61,
+          "delete": 1,
+          "insert": " const preservedHotels=new Set(trip.items.filter(x=>x.category==='Penginapan'&&(plan.context.preserveItemIds||[]).includes(x.id)).map(x=>x.id));\n const requested=[...new Set([...(plan.context.replaceItemIds||[]),...trip.items.filter(x=>x.category==='Penginapan'&&!aiProtected(x)&&!isTemplateItem(trip,x)).map(x=>x.id)])].filter(id=>!preservedHotels.has(id));\n"
+        },
+        {
+          "line": 74,
+          "delete": 1,
+          "insert": "  return {id:'ai-plan-'+a.id,...(typeof a.sourceRelevant==='boolean'?{sourceRelevant:a.sourceRelevant}:{}),aiGenerated:true,priceUnknown:true,sourceUrl:a.sourceUrl,title:a.title,place:a.location||a.title,locationCity:a.city||city,category,price:0,paid:false,day:a.day,time:a.time,...(a.geo?{geo:a.geo}:{}),...(a.admission?{admission:a.admission}:{}),...(lodging?{checkin:a.checkin||addDays(trip.start,a.day-1),checkout:a.checkout||addDays(trip.start,a.day),...(a.hotelId?{hotelId:a.hotelId}:{}),...(a.provider?{provider:a.provider}:{}),...(a.hotelArea?{hotelArea:a.hotelArea}:{}),...(a.geo?{geo:a.geo}:{}),shared:false}:{}),...(a.category==='Transfer'?{fromPlace:a.fromPlace,toPlace:a.toPlace,mode:a.mode,...(a.routeOptions?{routeOptions:a.routeOptions,selectedRoute:a.selectedRoute??0}:{})}:{}),note:a.note+(lodging?' · Rekomendasi penginapan, belum dipesan; harga dan ketersediaan belum diverifikasi.':a.sourceRelevant===false?' · Usulan AI; kecocokan sumber belum terverifikasi. Harga dan detail perlu diperiksa.':' · Usulan AI bersumber; jam/rute perlu diverifikasi. Harga belum diisi.')};\n"
+        },
+        {
+          "line": 98,
+          "delete": 1,
+          "insert": "  const protectedHotels=trip.items.filter(x=>x.category==='Penginapan'&&(!isTemplateItem(trip,x)||preservedHotels.has(x.id))&&!replacements.includes(x.id));\n"
+        },
+        {
+          "line": 113,
+          "delete": 1,
+          "insert": "   return nights.filter(day=>!lodgingDays.has(day)).map(day=>({...x,id:x.id+'-remaining-'+day,day:Math.max(day,x.day),time:day<=x.day?x.time:'',price:x.price/Math.max(1,nights.length),checkin:addDays(trip.start,day-1),checkout:addDays(trip.start,day)}));\n"
+        },
+        {
+          "line": 121,
+          "delete": 1,
+          "insert": " const merged=reconcileHotelTransfers(trip,[...existing,...additions],plan.context.language,plan.context.hotelStay?.day).map(item=>{\n  // A retained hotel time is not evidence that its arrival transfer has finished.\n  // Leave check-in unscheduled instead of inventing a journey duration.\n  if(item.category!=='Penginapan'||aiProtected(item)||!item.time)return item;\n  const earlyNew=!existing.includes(item)&&item.checkin===addDays(trip.start,item.day-1)&&item.time<'12:00';\n  const inbound=additions.some(a=>a.category==='Transportasi'&&a.day===item.day&&isTime(a.time)&&a.time>=item.time&&normalPlace(a.toPlace||'')===normalPlace(item.place||item.title));\n  // Legacy retained check-ins can also coincide with an arrival transfer\n  // whose title does not yet carry an exact hotel endpoint.\n  const collision=existing.includes(item)&&additions.some(a=>a.category==='Transportasi'&&a.day===item.day&&a.time===item.time);\n  return earlyNew||inbound||collision?{...item,time:'',note:item.note+(plan.context.language==='en'?' Check-in time is unconfirmed; verify hotel access after the arrival transfer.':' Jam check-in belum ditentukan; periksa akses hotel setelah transfer tiba.')}:item;\n });\n"
+        }
+      ]
+    },
+    {
+      "path": "app/activity-tickets.tsx",
+      "kind": "integration-edits",
+      "baseSHA256": "e1f6a7876e2926560bb7550c30907b72ae018fd287a8df38dd768d3ae4f9630c",
+      "sha256": "b145389c53cd75faf326a840c9da3738dae3ba2b19e4a217ee649cc4675df1c3",
+      "operations": [
+        {
+          "line": 8,
+          "delete": 0,
+          "insert": "import {activitySearchCity} from '../worker/activity-search-location.mjs';\n"
+        },
+        {
+          "line": 10,
+          "delete": 1,
+          "insert": " const locationCity=item.locationCity||cityById(item.cityId||'')?.name||cityAt(trip,item.day)?.name||trip.destinationMeta?.city||trip.destination;\n const city=activitySearchCity(locationCity);\n"
+        },
+        {
+          "line": 31,
+          "delete": 1,
+          "insert": "   <p className=\"inline-note\">{tr('activity_price_note')}</p>{city!==locationCity&&<p className=\"inline-note\">{tr('activity_genting_scope')}</p>}\n"
+        }
+      ]
+    },
+    {
+      "path": "app/i18n/locales/en.json",
+      "kind": "integration-edits",
+      "baseSHA256": "3a40320e222711a889c8c387acfc1b80976b6faa9e369a2307831df320ac7d52",
+      "sha256": "353fe90a73d3d44d82e43b3630d77b3384ea9d680224d035892d12c55c6c6446",
+      "operations": [
+        {
+          "line": 24,
+          "delete": 1,
+          "insert": "  \"ui_0025\": \". Failed requests do not count. This balance belongs to the current pass; after it is exhausted, another valid pass may be displayed. No quota is added by switching passes.\",\n"
+        },
+        {
+          "line": 1331,
+          "delete": 1,
+          "insert": "  \"account_pass_manage\": \"To buy or manage a Trip Pass, open an itinerary from My trips. The balance shown is for the current pass; another valid pass may appear when it is exhausted.\",\n"
+        },
+        {
+          "line": 1335,
+          "delete": 1,
+          "insert": "  \"budget_partial\": \"Some costs are unavailable\",\n  \"search_any_duration\": \"Any duration\",\n  \"search_any_budget\": \"Any budget\",\n  \"search_set_budget\": \"Set a budget\",\n  \"search_budget_amount\": \"Budget limit per person (IDR)\",\n  \"explore_media_required\": \"Sign in, wait for attachments to be ready, and consent to sending media. Muse must be active to use attachments.\",\n  \"explore_media_handoff\": \"Attachments will move to the editor after you select a trip. Click Generate itinerary with AI to analyse them; flight search does not read media.\",\n  \"search_duration_coverage\": \"Flexible duration coverage\",\n  \"ai_source_unverified\": \"The attraction source has not been verified as relevant. Check an official source; this link is not evidence of an admission fee.\",\n  \"ai_evidence_review\": \"Review needed: {{routes}} connections, {{sources}} attraction sources, {{legs}} transport sources\",\n  \"ai_connection_gap\": \"Day {{day}}: the connection from {{from}} to {{to}} is not fully recorded. Schedule and fare are unverified.\",\n  \"admission_info_source\": \"Attraction information; check admission fees separately\",\n  \"route_source_unverified\": \"The source for this leg is unverified; check the operator and route.\",\n  \"google_route_choose_time\": \"Choose the departure date and time after checking your flight or activity schedule.\",\n  \"activity_genting_scope\": \"Genting tours are searched from Kuala Lumpur. Check whether the product is a gondola ticket or a tour with transfers; the prices and inclusions differ.\"\n"
+        }
+      ]
+    },
+    {
+      "path": "app/i18n/locales/id.json",
+      "kind": "integration-edits",
+      "baseSHA256": "6902ad7e9ed655872485a7d9cd9d88d4c63c22ca8806f303e2ac66ed14503707",
+      "sha256": "23249d9daea45da5ddea2aa38c88bbf53e3daee605f8d905b9efca0b3fa5570a",
+      "operations": [
+        {
+          "line": 24,
+          "delete": 1,
+          "insert": "  \"ui_0025\": \". Permintaan gagal tidak dihitung. Saldo ini milik pass yang sedang digunakan; setelah habis, pass lain yang masih berlaku dapat ditampilkan. Pergantian pass tidak menambah kuota.\",\n"
+        },
+        {
+          "line": 1331,
+          "delete": 1,
+          "insert": "  \"account_pass_manage\": \"Untuk membeli atau mengelola Trip Pass, buka itinerary dari Perjalanan saya. Saldo yang ditampilkan milik pass saat ini; pass lain yang masih berlaku dapat muncul setelah habis.\",\n"
+        },
+        {
+          "line": 1335,
+          "delete": 1,
+          "insert": "  \"budget_partial\": \"Sebagian biaya belum tersedia\",\n  \"search_any_duration\": \"Berapa hari pun\",\n  \"search_any_budget\": \"Berapa pun\",\n  \"search_set_budget\": \"Tentukan budget\",\n  \"search_budget_amount\": \"Batas budget per orang (Rp)\",\n  \"explore_media_required\": \"Login, tunggu lampiran siap, lalu setujui pengiriman media. Muse harus aktif untuk memakai lampiran.\",\n  \"explore_media_handoff\": \"Lampiran akan diteruskan ke editor setelah Anda memilih perjalanan. Klik Susun itinerary dengan AI untuk menganalisisnya; pencarian tiket tidak membaca media.\",\n  \"search_duration_coverage\": \"Cakupan durasi bebas\",\n  \"ai_source_unverified\": \"Kecocokan sumber wisata belum terverifikasi. Periksa sumber resmi; tautan ini tidak digunakan sebagai bukti tarif.\",\n  \"ai_evidence_review\": \"Perlu diperiksa: {{routes}} sambungan, {{sources}} sumber wisata, {{legs}} sumber transportasi\",\n  \"ai_connection_gap\": \"Hari {{day}}: sambungan {{from}} → {{to}} belum tercatat lengkap. Jadwal dan tarif belum terverifikasi.\",\n  \"admission_info_source\": \"Informasi wisata; tarif masih perlu diperiksa\",\n  \"route_source_unverified\": \"Sumber untuk kaki perjalanan ini belum terverifikasi; periksa operator dan rute.\",\n  \"google_route_choose_time\": \"Pilih tanggal dan jam keberangkatan sesuai jadwal penerbangan atau kegiatan.\",\n  \"activity_genting_scope\": \"Tur Genting dicari dari Kuala Lumpur. Periksa apakah produk berupa tiket gondola atau paket tur dengan transfer; harga dan cakupannya berbeda.\"\n"
+        }
+      ]
+    },
+    {
+      "path": "public/privacy.html",
+      "kind": "integration-edits",
+      "baseSHA256": "30d913c9b73eafd1b2dbad0b7c2c5e305da3f85a7f27475aebff20c96451232d",
+      "sha256": "770cccaf8ad21b868fabdfbf5516a1d0a199d76c8dbf1c7079ef13e84c67990c",
+      "operations": [
+        {
+          "line": 4,
+          "delete": 1,
+          "insert": "<article data-policy-lang=\"id\"><h1>Kebijakan Privasi</h1><p class=\"updated\">Diperbarui 5 November 2026</p>\n"
+        },
+        {
+          "line": 7,
+          "delete": 1,
+          "insert": "<h2>Penyimpanan dan penyedia layanan</h2><p>Browser menyimpan preferensi bahasa dan sesi akun serta draft perjalanan. Perjalanan yang disimpan, akses berbayar, penghitung pemakaian, dan percakapan bantuan diproses melalui backend SortTrip dan Supabase. Hosting menggunakan Cloudflare. Permintaan AI yang Anda jalankan dapat mengirim konteks perjalanan, instruksi, serta riwayat percakapan terkait ke Meta melalui Meta Model API (Muse Spark). Jika Anda melampirkan gambar atau video dan menyetujui pemrosesannya, media tersebut juga dikirim ke Meta untuk analisis. SortTrip tidak menyertakan file media mentah dalam itinerary yang disimpan; hasil analisis dan percakapan dapat tersimpan bersama itinerary. Jangan unggah konten pribadi, sensitif, atau konten yang tidak Anda miliki atau tidak berizin. Pemrosesan oleh Meta mengikuti ketentuan dan kebijakan Meta. Permintaan pencarian hotel dan transportasi dapat mengirim tanggal, lokasi, dan jumlah wisatawan yang diperlukan ke penyedia terkait, termasuk LiteAPI dan 12Go. Pesan bantuan dapat diteruskan kepada tim SortTrip melalui Telegram.</p>\n<h2>Lokasi dan SortTrip Guide</h2><p>Guide aktif setelah Anda mengonfirmasi itinerary final. Lokasi perangkat bersifat opsional dan memerlukan izin browser. Pemantauan lokasi berjalan di halaman aktif, bukan sebagai pelacakan latar belakang. Dengan persetujuan berbagi lokasi di Guide, koordinat yang cukup akurat dan baru dapat dikirim sementara ke backend dan Meta untuk bantuan; pemeriksaan rute ke Google memerlukan izin rute terpisah. Koordinat tidak disimpan sebagai riwayat lokasi dalam itinerary. Anda dapat menonaktifkan izin di Guide atau browser. Waktu atau lokasi tidak menjamin bahwa kegiatan telah selesai.</p>\n"
+        },
+        {
+          "line": 11,
+          "delete": 1,
+          "insert": "<article data-policy-lang=\"en\" hidden><h1>Privacy Policy</h1><p class=\"updated\">Updated 5 November 2026</p>\n"
+        },
+        {
+          "line": 14,
+          "delete": 1,
+          "insert": "<h2>Storage and service providers</h2><p>Your browser stores language preferences, account sessions, and trip drafts. Saved trips, paid access, usage counts, and support conversations are processed through the SortTrip backend and Supabase. Cloudflare provides hosting. AI requests you initiate may send relevant trip context, instructions and conversation history to Meta through Meta Model API (Muse Spark). If you attach images or video and consent to processing, that media is also sent to Meta for analysis. SortTrip does not include raw media files in saved itineraries; analysis results and conversations may be saved with the itinerary. Do not upload private, sensitive or unlicensed content. Processing by Meta is subject to Meta’s terms and policies. Hotel and transport searches may send necessary dates, locations, and traveler counts to providers including LiteAPI and 12Go. Support messages may be forwarded to the SortTrip team through Telegram.</p>\n<h2>Location and SortTrip Guide</h2><p>Guide activates after you confirm a final itinerary. Device location is optional and requires browser permission. Location monitoring runs while the page is active, rather than as background tracking. With location-sharing consent in Guide, sufficiently accurate and recent coordinates may be sent temporarily to the backend and Meta for assistance; route checks with Google require separate route consent. Coordinates are not saved as itinerary location history. You can disable permission in Guide or your browser. Time or location alone does not guarantee that an activity is complete.</p>\n"
+        }
+      ]
+    },
+    {
+      "path": "checks/google-routes.test.mjs",
+      "kind": "integration-edits",
+      "baseSHA256": "e4a408dd59aab666fb5ad2c590754c33c62a3c8f5bcb9470c22cfd7a012aa473",
+      "sha256": "a4b32d9746e3852d268bd53b2bd9a808097cbbc20a110f927bf7a68e5013de26",
+      "operations": [
+        {
+          "line": 7,
+          "delete": 0,
+          "insert": "test('known airport IATA codes use existing catalogue names; terminals are never guessed',()=>{\n const result=validateGoogleRoute({from:'KUL',to:'Travelodge Kuala Lumpur City Centre',mode:'DRIVE'});\n assert.equal(result.origin.address,'Kuala Lumpur International Airport, Kuala Lumpur, MY');\n for(const name of ['KUL, Kuala Lumpur','KUL · Kuala Lumpur','kul, Kuala Lumpur'])assert.equal(validateGoogleRoute({from:name,to:'Travelodge',mode:'DRIVE'}).origin.address,result.origin.address);\n assert.match(validateGoogleRoute({from:'KUL, Terminal 2',to:'Travelodge',mode:'DRIVE'}).origin.address,/International Airport, Terminal 2/);\n assert.equal(validateGoogleRoute({from:'KL Sentral, Kuala Lumpur',to:'Travelodge',mode:'DRIVE'}).origin.address,'KL Sentral, Kuala Lumpur');\n assert.doesNotMatch(result.origin.address,/Terminal|T1|T2/);\n assert.equal(validateGoogleRoute({from:'ZZZ',to:'City hotel',mode:'DRIVE'}).origin.address,'ZZZ');\n assert.equal(validateGoogleRoute({from:'Pasar Seni',to:'City hotel',mode:'WALK'}).origin.address,'Pasar Seni');\n});\n"
+        }
+      ]
+    },
+    {
+      "path": "checks/google-route-ui.test.mjs",
+      "kind": "integration-edits",
+      "baseSHA256": "e4153af60f1feceb0e9d6f59715fefb07b1ce1f902c5bc15e60093f4b2c7ceeb",
+      "sha256": "17bbad84b34194e882ec0aa445a3f7812a3a014ebb84dd8e4f30fb2e4fe07c1a",
+      "operations": [
+        {
+          "line": 9,
+          "delete": 0,
+          "insert": "code=code.replaceAll(\"'../worker/route-location.mjs'\",JSON.stringify(new URL('../worker/route-location.mjs',import.meta.url).href));\n"
+        },
+        {
+          "line": 22,
+          "delete": 0,
+          "insert": "\ntest('airport map labels expand in external directions and transit never invents a 09:00 departure',()=>{\n const html=renderToStaticMarkup(React.createElement(GoogleRouteCheck,{from:'KUL, Kuala Lumpur',to:'Travelodge',date:'2026-11-07'}));\n assert.match(html,/origin=Kuala\\+Lumpur\\+International\\+Airport/);\n assert.match(html,/Kuala Lumpur International Airport/);\n assert.doesNotMatch(html,/T09:00/);\n assert.match(html,/<button[^>]*disabled/);\n});\n"
+        }
+      ]
+    },
+    {
+      "path": "checks/lite-hotel.test.mjs",
+      "kind": "integration-edits",
+      "baseSHA256": "315d213d46d1fa728d923613ee8cc93062b3178461807e56c0f7c9be96e4a4a2",
+      "sha256": "94e99a74f99089a2566c0ec7a1c710326c0fec8359b08f104fc106111e921856",
+      "operations": [
+        {
+          "line": 3,
+          "delete": 0,
+          "insert": "test('different neighbourhood labels in one city do not force hotel moves; overnight arrival covers the preceding night',()=>{\n const area={category:'Area menginap',city:'Kuala Lumpur',sourceUrl:'https://tourism.test',time:'01:00'};\n const query={...q,start:'2026-11-07',days:4,arrival:'22:25',arrivalDay:0};\n const grouped=groupHotelAreas({activities:[{...area,id:'a',day:2,title:'Bukit Bintang',location:'Bukit Bintang'},{...area,id:'b',day:3,time:'19:00',title:'KL Sentral',location:'KL Sentral'}]},query);\n assert.equal(grouped.activities.length,1);assert.equal(grouped.activities[0].checkin,'2026-11-07');assert.equal(grouped.activities[0].checkout,'2026-11-10');\n assert.equal(groupHotelAreas({activities:[{...area,id:'a',day:1,title:'A'},{...area,id:'b',day:2,title:'B'}]},{...query,interests:'pindah hotel'}).activities.length,2);\n const selected=groupHotelAreas({activities:[{...area,id:'a',day:2,title:'A'}]},{...query,retained:[{category:'Penginapan',day:2,checkin:'2026-11-07',checkout:'2026-11-08'}]});\n assert.equal(selected.activities[0].checkin,'2026-11-08');\n});\n\ntest('supplier hotel rebinding updates explicit stay transfers without inventing fares or replacing neighbourhood visits',()=>{\n const area={id:'a',category:'Area menginap',city:'Kuala Lumpur',day:1,time:'16:00',title:'Bukit Bintang',location:'Bukit Bintang',checkin:'2026-11-07',checkout:'2026-11-10'};\n const leg={fromPlace:'city stay',toPlace:'Museum',mode:'Walking',sourceUrl:'https://tourism.test',fare:'MYR 5',duration:'5 minutes',checkedAt:'2026-11-01'};\n const route={id:'r',category:'Transfer',day:2,title:'Transfer stay to Museum',fromPlace:'city stay',toPlace:'Museum',routeOptions:[{legs:[leg]}]};\n const visit={id:'v',category:'Wisata',day:2,title:'Bukit Bintang',location:'Bukit Bintang'};\n const visitRoute={...route,id:'v-route',title:'Bukit Bintang to Museum',fromPlace:'Bukit Bintang'};\n const next=applyLiteHotels({activities:[area,route,visit,visitRoute],sources:[]},[{id:'ai-plan-a',provider:'LiteAPI',hotelName:'Real supplier hotel',checkin:area.checkin,checkout:area.checkout}]);\n assert.equal(next.activities[1].fromPlace,'Real supplier hotel');assert.equal(next.activities[1].routeOptions[0].legs[0].fare,undefined);assert.equal(next.activities[1].routeOptions[0].legs[0].duration,undefined);\n assert.equal(next.activities[3],visitRoute);assert.equal(route.fromPlace,'city stay');\n});\n"
+        },
+        {
+          "line": 64,
+          "delete": 1,
+          "insert": " const quote=checkedLiteOffer(hotel,rate(),q,{...target,checkout:'2027-01-12'});const enriched=applyLiteHotels(grouped,[quote]);assert.equal(enriched.activities[0].title,'Hotel B');assert.equal(enriched.activities[0].provider,'LiteAPI');assert.equal(enriched.activities[1].fromPlace,'Hotel B');assert.equal(enriched.activities[1].toPlace,'Park');assert.equal(enriched.activities[1].sourceRelevant,false);assert.equal(route.fromPlace,'Bukit Bintang');assert.ok(enriched.sources.some(s=>s.url===LITE_HOTEL_SOURCE));\n"
+        },
+        {
+          "line": 104,
+          "delete": 0,
+          "insert": "\ntest('budget inventory is fetched before model latency; protected/split scopes are not guessed',async()=>{\n const {prefetchBudgetHotels}=await import('../worker/itinerary.js');let calls=0;\n const query={...q,hotelBudget:{maxNightIDR:500000,exclusive:true}};\n const fetcher=async(url,opts)=>{calls++;const b=JSON.parse(opts.body);assert.equal(b.checkin,q.start);assert.equal(b.checkout,'2027-01-13');return Response.json({data:[{hotelId:hotel.id,roomTypes:[rate(300000)]}],hotels:[hotel]});};\n const prefetched=await prefetchBudgetHotels(query,env,fetcher);\n assert.equal(calls,2);assert.equal(prefetched.length,1);assert.equal(prefetched[0].amountIDR,300020);assert.equal(prefetched[0].adults,2);\n assert.deepEqual(await prefetchBudgetHotels({...query,hotelStay:{day:3}},env,()=>assert.fail('airport scope must wait')),[]);\n assert.deepEqual(await prefetchBudgetHotels({...query,dailyCities:[{day:2,city:'Melaka'}]},env,()=>assert.fail('multi-city scope must wait')),[]);\n});\n"
+        }
+      ]
+    },
+    {
+      "path": "checks/apply-ai-plan.test.mjs",
+      "kind": "integration-edits",
+      "baseSHA256": "1aa052938e2e00545d92877ee8e1395140bd2ab0cfcaeb363b6dd17f14a81a18",
+      "sha256": "4a1b1b04f707eb34747bf7f226d3a39420f1c9ad16acdeddc88cddaff088cc6b",
+      "operations": [
+        {
+          "line": 3,
+          "delete": 0,
+          "insert": "import {groupHotelAreas,applyLiteHotels} from '../worker/lite-hotel.js';\n"
+        },
+        {
+          "line": 11,
+          "delete": 0,
+          "insert": "\ntest('overnight arrival area research becomes one full supplier stay and matching airport/museum connectors',()=>{\n const ctx={city:'Kuala Lumpur',start:'2026-11-07',days:4,people:1,budget:4500000,arrival:'22:25',arrivalDay:0};\n const area={id:'area',category:'Area menginap',day:2,time:'01:00',title:'Bukit Bintang',location:'Bukit Bintang',city:ctx.city,sourceUrl,note:'Stay area'};\n const transfer=(id,fromPlace,toPlace,time)=>({id,category:'Transfer',day:2,time,title:'Transfer '+fromPlace+' to '+toPlace,fromPlace,toPlace,mode:'Taxi',sourceUrl,note:'Verify route',routeOptions:[{kind:'hemat',legs:[{fromPlace,toPlace,mode:'Taxi',sourceUrl,fare:'old area fare',duration:'old area duration'}]}]});\n const grouped=groupHotelAreas({context:ctx,sources:[{url:sourceUrl}],activities:[transfer('arrival','KUL','city stay','00:30'),area,transfer('museum','city stay','Museum','09:00'),{...area,id:'next-area',day:3,time:'19:00',title:'KL Sentral',location:'KL Sentral'}]},ctx);\n const stay=grouped.activities.find(a=>a.category==='Area menginap');\n const quote=hotelQuote({...stay,title:'Supplier Hotel',hotelId:'real'},900000);\n const enriched=applyLiteHotels(grouped,[quote]);\n const original={id:'hotel',category:'Penginapan',template:true,day:2,time:'00:25',title:'Old template hotel',price:1620000,paid:false,checkin:'2026-11-07',checkout:'2026-11-10',note:'anggaran contoh'};\n const result=applyAIPlan({...ctx,destination:'kl',destinationMeta:{city:ctx.city},flight:{arrive:'22:25',arrivalDay:0},items:[original]},enriched,[quote]);\n const hotels=result.items.filter(x=>x.category==='Penginapan');assert.equal(hotels.length,1);assert.equal(hotels[0].title,'Supplier Hotel');assert.equal(hotels[0].checkin,ctx.start);assert.equal(hotels[0].checkout,'2026-11-10');assert.equal(hotels[0].price,900000);\n assert.equal(result.items.find(x=>x.id==='ai-plan-arrival').toPlace,'Supplier Hotel');assert.equal(result.items.find(x=>x.id==='ai-plan-museum').fromPlace,'Supplier Hotel');\n assert.equal(result.items.find(x=>x.id==='ai-plan-arrival').routeOptions[0].legs[0].fare,undefined);\n assert.ok(!result.items.some(x=>x.title==='Old template hotel'));assert.equal(original.price,1620000);\n});\n\ntest('an unconfirmed early check-in never precedes a later inbound transfer; booked stays remain unchanged',()=>{\n const ctx={city:'Kuala Lumpur',start:'2026-11-07',days:4,people:1,budget:4500000};\n const stay={id:'old',category:'Penginapan',day:2,time:'00:25',title:'Selected Hotel',place:'Selected Hotel',price:400000,paid:false,hotelId:'old',checkin:'2026-11-07',checkout:'2026-11-10',note:'selected'};\n const incoming={id:'arrival',day:2,time:'00:30',category:'Transfer',title:'Airport to hotel',fromPlace:'KUL',toPlace:stay.title,mode:'Taxi',sourceUrl,note:'Route duration unknown'};\n const p={context:ctx,sources:[{url:sourceUrl}],activities:[incoming]};\n const input={...ctx,destination:'kl',destinationMeta:{city:ctx.city},items:[stay]};\n const result=applyAIPlan(input,p);\n assert.equal(result.items.find(x=>x.id==='old').time,'');assert.match(result.items.find(x=>x.id==='old').note,/belum ditentukan/);\n const booked={...stay,paid:true};assert.equal(applyAIPlan({...input,items:[booked]},p).items.find(x=>x.id==='old'),booked);\n});\ntest('explicit keep-hotel instruction retains the full template stay and midnight check-in even against a supplier replacement',()=>{\n const ctx={city:'Kuala Lumpur',start:'2026-11-07',days:4,people:1,budget:4500000};\n const stay={id:'hotel',category:'Penginapan',template:true,day:2,time:'01:55',title:'Travelodge',place:'Travelodge',price:1620000,paid:false,checkin:'2026-11-07',checkout:'2026-11-10',note:'anggaran contoh'};\n const input={...ctx,destination:'kl',destinationMeta:{city:ctx.city},flight:{arrive:'23:55',arrivalDay:0},items:[stay]};\n const preserved=aiTripContext(input,ctx.city,'Malaysia','Pertahankan penerbangan, tanggal dan hotel. Hari ketiga museum.');\n assert.deepEqual(preserved.preserveItemIds,['hotel']);assert.equal(preserved.retained[0].title,'Travelodge');\n assert.deepEqual(aiTripContext(input,ctx.city,'Malaysia','Pertahankan penerbangan dan Travelodge beserta 3 malamnya.').preserveItemIds,['hotel']);\n const area={id:'area',day:2,time:'16:00',category:'Area menginap',title:'Pasar Seni',sourceUrl,note:'Area'};\n const base={context:{...ctx,...preserved},sources:[{url:sourceUrl}],activities:[area]};\n for(const proposed of [base,{...base,context:{...base.context,replaceItemIds:['hotel']},activities:[{...area,category:'Penginapan',hotelId:'new',provider:'LiteAPI',checkin:'2026-11-07',checkout:'2026-11-10'}]}]){\n  const result=applyAIPlan(input,proposed,[hotelQuote(proposed.activities[0])]);\n  assert.deepEqual(result.items,[stay]);\n }\n});\ntest('splitting an unprotected template stay never moves its midnight arrival check-in to the departure day',()=>{\n const ctx={city:'Kuala Lumpur',start:'2026-11-07',days:4,people:1,budget:4500000};\n const stay={id:'hotel',category:'Penginapan',template:true,day:2,time:'01:55',title:'Travelodge',price:1620000,paid:false,checkin:'2026-11-07',checkout:'2026-11-10',note:'anggaran contoh'};\n const result=applyAIPlan({...ctx,destination:'kl',destinationMeta:{city:ctx.city},items:[stay]}, {context:ctx,sources:[{url:sourceUrl}],activities:[{id:'area',day:2,time:'16:00',category:'Area menginap',title:'Pasar Seni',sourceUrl,note:'Area'}]});\n const remaining=result.items.find(x=>x.id==='hotel-remaining-1');\n assert.equal(remaining.day,2);assert.equal(remaining.time,'01:55');assert.equal(remaining.checkin,'2026-11-07');\n});\n"
+        },
+        {
+          "line": 14,
+          "delete": 0,
+          "insert": "test('unverified airport move keeps selected hotel and invalidates speculative airport-hotel connections without touching paid routes',()=>{\n const stay={...hotel,paid:false,title:'Selected city hotel',checkin:context.start,checkout:'2026-12-12'};\n const route={id:'r',category:'Transportasi',title:'Hotel KLIA ke terminal',fromPlace:'KLIA',toPlace:'Terminal KLIA',day:3,time:'10:00',price:100000,paid:false,note:'shuttle',routeOptions:[{legs:[{fromPlace:'KLIA',toPlace:'Terminal KLIA'}]}],bookingUrl:'https://example.com/old'};\n const result=reconcileHotelTransfers({...context,items:[stay]},[stay,route,{...route,id:'paid',paid:true},{...route,id:'arrival',day:2,fromPlace:'Putrajaya',toPlace:'KLIA'}],'id',2);\n assert.equal(result[1].fromPlace,stay.title);assert.equal(result[1].routeOptions,undefined);assert.equal(result[1].bookingUrl,undefined);assert.equal(result[1].priceUnknown,true);assert.match(result[1].note,/belum terverifikasi/);\n assert.equal(result[2].fromPlace,'KLIA');assert.equal(result[3].toPlace,stay.title);\n});\n"
+        },
+        {
+          "line": 31,
+          "delete": 0,
+          "insert": "});\ntest('expanding a short hotel display title preserves researched legs when structured endpoints did not change',()=>{\n const stay={...hotel,paid:false,title:'Travelodge Kuala Lumpur City Centre',place:'Travelodge Kuala Lumpur City Centre',checkin:context.start,checkout:'2026-12-12'};\n const route={id:'arrival',category:'Transportasi',day:1,time:'18:00',title:'KUL → Travelodge',fromPlace:'KUL',toPlace:stay.place,price:100,paid:false,note:'Researched route',priceQuote:{amountIDR:100},routeOptions:[{kind:'hemat',legs:[{fromPlace:'KUL',toPlace:stay.place,mode:'Bus'}]}]};\n const next=reconcileHotelTransfers({...trip,items:[stay]},[stay,route]).at(-1);\n assert.equal(next.title,'KUL → '+stay.place);assert.equal(next.routeOptions,route.routeOptions);assert.equal(next.priceQuote,route.priceQuote);assert.equal(next.note,route.note);assert.equal(next.price,100);\n"
+        },
+        {
+          "line": 82,
+          "delete": 0,
+          "insert": "});\ntest('attraction replacement does not force obsolete unprotected route requests into new research',()=>{\n const old={id:'old-route',category:'Transportasi',day:2,fromPlace:'Old museum',toPlace:'Old park',paid:false,time:'10:00',title:'Old route',note:'',price:0};\n const t={...trip,items:[...trip.items,old,{...old,id:'booked',paid:true},{...old,id:'later',day:3}]};\n const result=aiTripContext(t,context.city,'Malaysia','Hari kedua ganti wisata menjadi museum');\n assert.equal(result.routeRequests.length,2);assert.ok(result.routeRequests.some(x=>x.protected));assert.ok(result.routeRequests.some(x=>x.day===3));\n assert.ok(!result.routeRequests.some(x=>x.day===2&&!x.protected));\n"
+        },
+        {
+          "line": 218,
+          "delete": 0,
+          "insert": "\ntest('fallback hotel has no invented check-in time when arrival transfer starts at that time',()=>{\n const old={...hotel,paid:false,userEdited:true,time:'19:20',note:'Original hotel',checkin:context.start,checkout:'2026-12-12'};\n const transfer={id:'arrival',day:1,time:'19:20',category:'Transfer',title:'Airport to hotel',fromPlace:'Airport',toPlace:'Hotel',mode:'Bus',sourceUrl,note:'Arrival transfer'};\n const draft={...plan,context:{...context,replaceItemIds:[old.id]},activities:[transfer]};\n const result=applyAIPlan({...trip,items:[flight,old]},draft);\n assert.equal(result.items.find(x=>x.id===old.id).time,'');\n assert.match(result.items.find(x=>x.id===old.id).note,/Jam check-in/);\n const locked={...old,aiLocked:true};\n assert.equal(applyAIPlan({...trip,items:[flight,locked]},draft).items.find(x=>x.id===locked.id).time,'19:20');\n});\n"
+        }
+      ]
+    },
+    {
+      "path": "checks/viator-api.test.mjs",
+      "kind": "integration-edits",
+      "baseSHA256": "c577e2d5fb82ddee2ab86a2ccdee8822e11ff2a45913f6947a4e89a205326afb",
+      "sha256": "bfebb4c796a8a39b57f1c6b55ee072d1b6e4de69fab4caede59f7358128951ed",
+      "operations": [
+        {
+          "line": 2,
+          "delete": 0,
+          "insert": "import {activitySearchCity} from '../worker/activity-search-location.mjs';\ntest('Genting search uses editable Kuala Lumpur departure scope without changing other destinations',()=>{\n assert.equal(activitySearchCity('Genting Highlands'),'Kuala Lumpur');assert.equal(activitySearchCity('Genting'),'Kuala Lumpur');\n assert.equal(activitySearchCity('Singapore'),'Singapore');assert.equal(activitySearchCity('Paris'),'Paris');\n});\n"
+        }
+      ]
+    },
+    {
+      "path": "checks/trip-access.test.mjs",
+      "kind": "integration-edits",
+      "baseSHA256": "46099dd4424447d65d28b114d2dc88301056a4e85e290e394c58ed7ab7fbab6a",
+      "sha256": "aa39754a8ed48d782d0cf09b91888ead4164609ae72244d8bf6ad7450e4617d2",
+      "operations": [
+        {
+          "line": 16,
+          "delete": 0,
+          "insert": "});\ntest('display can switch from one remaining result to an existing next pass without adding quota',()=>{\n const first={...row,request_limit:10,requests:9},next={...row,request_limit:10,requests:6};\n assert.equal(passSummary([first,next]).remaining,1);\n assert.equal(passSummary([{...first,requests:10},next]).remaining,4);\n assert.equal(first.requests,9);assert.equal(next.requests,6);\n"
+        }
+      ]
+    },
+    {
+      "path": "checks/itinerary-evidence.test.mjs",
+      "kind": "new-event-module",
+      "sha256": "863e62fc7b0329e2acdbf020637d8bf7c4ea435efb8047102effaf3a45dcef99",
+      "bytes": 9387
+    },
+    {
+      "path": "checks/bilingual.test.mjs",
+      "kind": "integration-edits",
+      "baseSHA256": "0bbe7a29ecdd4c541dc79f3061c36a59de6f679ffb2cd395b8b77650794a8331",
+      "sha256": "ff13e9a4222cdad5cbeeaad7b7c83cbd4d98f9c790e783ef6222c90669b4e85a",
+      "operations": [
+        {
+          "line": 21,
+          "delete": 0,
+          "insert": " assert.equal(ui.tr('rec_day',{day:2}),'Day 2');assert.equal(ui.tr('day_option',{day:3}),'Day 3');\n"
+        },
+        {
+          "line": 55,
+          "delete": 1,
+          "insert": " try{globalThis.fetch=async(url,options)=>{calls.push(String(url));if(String(url).endsWith('/auth/v1/user'))return Response.json({id:'fixture'});const body=JSON.parse(options.body);assert.match(body.instructions,/\\[SORTTRIP_PLATFORM_CONTEXT [^\\n]+purpose=translation\\]/);assert.equal(body.store,false);assert.equal(body.tools,undefined);assert.match(body.instructions,/English/);return Response.json({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify({entries:[{id:'n0',text:'Walk for 10 minutes.'}]})}]}]});};\n"
+        }
+      ]
+    },
+    {
+      "path": "checks/privacy-current.test.mjs",
+      "kind": "new-event-module",
+      "sha256": "03cca0b56ccde2ea5eedc29513f71a22d8619d2c4e8c6667d3b1f4508ba19629",
+      "bytes": 780
     }
   ]
 }

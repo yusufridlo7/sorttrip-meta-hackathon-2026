@@ -1,5 +1,21 @@
 # Reproduction and verification — 3 November 2026 WIB
 
+## Latest maintenance candidate — 5 November 2026
+
+The grace-period candidate was independently reconstructed in a new directory outside the original application's ancestor path from the unchanged pinned Git dependency. All **100** module/integration hashes applied successfully. Installation used the locked dependency versions with lifecycle scripts disabled; npm reported zero vulnerabilities. An initial offline install lacked one cache entry; registry installation then succeeded.
+
+| Check | Result |
+|---|---|
+| Packaging | 6 PASS, 0 FAIL |
+| Feature and focused regression tests | 171 PASS, 0 FAIL |
+| TypeScript and Vite build | PASS |
+| Worker dry-run | PASS, no deployment |
+| Static package scan | PASS |
+
+Total: **177 offline checks PASS, 0 FAIL, none skipped**. The Vite large-chunk warning remains. Tests cover airport label normalization, no invented transit time, same-city/overnight/retained stay behavior, actual hotel connector rebinding, protected items, exact day interpolation, Viator scope, privacy disclosure and existing Guide/Muse/ledger protections. No new live inference, supplier request, SQL, payment or deployment was performed. See GRACE_PERIOD_FIXES.md for remaining live-verification limits. Publication is a separate owner-controlled step.
+
+The following sections describe historical 3 November verification and do not supersede this candidate result.
+
 ## Reproduced, not merely copied
 
 The package was copied to a separate clean directory outside the original application's ancestor directories, without `.runtime`, `.git`, dependencies, configuration or credentials. The documented `npm run prepare:platform` fetched the pinned dependency commit from the public GitHub repository and reconstructed all event changes using hash-checked edits. After owner-approved publication, initial source commit `6684bde9732c9dde76797ac79c9a65a9cc0bf065` was also cloned from the actual public submission repository: packaging tests 6 PASS, source scan PASS and dependency reconstruction PASS, with a clean Git working tree. Full 86 feature tests/build/Worker dry-run were already verified on the identical event source in the clean candidate; no paid inference or SQL was repeated for publication.
